@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-PT">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -27,242 +27,322 @@
         .view-section { display: none; }
         .view-section.active { display: block; animation: fadeIn 0.3s ease-in-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        /* Estilos adicionais para a tabela de desktop */
+        table { border-collapse: separate; border-spacing: 0; }
+        th, td { border-bottom: 1px solid #e5e7eb; }
+        th { background-color: #f9fafb; }
     </style>
 </head>
-<body class="bg-white min-h-screen font-sans text-gray-800">
+<body class="bg-gray-50 min-h-screen font-sans text-gray-800">
     
     <!-- TELA DE LOGIN -->
     <div id="tela-login" class="fixed inset-0 bg-white z-50 flex flex-col items-center justify-center px-6 text-center active">
-        <div class="w-20 h-20 mb-3">
+        <div class="w-24 h-24 mb-4">
             <img src="logo-samu.jpg" alt="Logo SAMU" class="w-full h-full object-contain">
         </div>
-        <h1 class="text-xl font-bold text-samunavy mb-1">SAMU - MOGI DAS CRUZES</h1>
-        <p class="text-[11px] text-gray-500 font-semibold uppercase tracking-wider mb-8">Controle de Estoque • Sala 21</p>
-        <p class="text-sm text-gray-600 mb-4">Faça login para gerenciar o inventário</p>
-        <button onclick="simularLogin()" class="bg-white border shadow-sm px-6 py-2 rounded-lg flex items-center gap-2 hover:bg-gray-50 text-gray-700 font-medium">
-            <i class="fab fa-google text-red-500"></i> Entrar com Google
+        <h1 class="text-2xl font-bold text-samunavy mb-1">SAMU - MOGI DAS CRUZES</h1>
+        <p class="text-xs text-gray-500 font-semibold uppercase tracking-wider mb-8">Controle de Estoque • Sala 21</p>
+        <button onclick="simularLogin()" class="bg-white border shadow-sm px-8 py-3 rounded-lg flex items-center gap-3 hover:bg-gray-50 text-gray-700 font-medium transition">
+            <i class="fab fa-google text-red-500 text-xl"></i> Entrar com Google
         </button>
-        <!-- O container real do Google Auth ficará aqui no futuro -->
         <div id="google-btn-container" class="hidden"></div> 
     </div>
 
     <!-- APLICAÇÃO PRINCIPAL -->
-    <div id="app-conteudo" class="hidden">
+    <div id="app-conteudo" class="hidden flex flex-col min-h-screen">
         
-        <!-- HEADER ESTÁTICO -->
+        <!-- HEADER ESTÁTICO (WIDE) -->
         <header class="bg-white text-samunavy shadow-sm sticky top-0 z-40 linha-degrade-grossa">
-            <div class="max-w-md mx-auto px-4 py-3 flex justify-between items-center">
-                <div class="flex items-center gap-3 cursor-pointer" onclick="navegar('home')">
-                    <div class="w-10 h-10 flex items-center justify-center">
+            <!-- max-w-7xl expande o limite central para telas grandes -->
+            <div class="max-w-7xl mx-auto px-6 py-3 flex justify-between items-center">
+                <div class="flex items-center gap-4 cursor-pointer" onclick="navegar('home')">
+                    <div class="w-12 h-12 flex items-center justify-center">
                         <img src="logo-samu.jpg" alt="Logo SAMU" class="w-full h-full object-contain">
                     </div>
                     <div>
-                        <h1 class="text-base font-bold leading-tight tracking-wide text-samunavy">SAMU MOGI</h1>
-                        <p class="text-[10px] text-gray-500 font-semibold uppercase tracking-wider">Estoque Sala 21</p>
+                        <h1 class="text-lg font-bold leading-tight tracking-wide text-samunavy">SAMU MOGI</h1>
+                        <p class="text-xs text-gray-500 font-semibold uppercase tracking-wider">Estoque Sala 21</p>
                     </div>
                 </div>
-                <button onclick="sair()" class="text-gray-400 hover:text-red-500 transition" title="Sair">
-                    <i class="fas fa-right-from-bracket"></i>
-                </button>
+                <div class="flex items-center gap-6">
+                    <span class="text-sm text-gray-600 font-medium"><i class="fas fa-user-circle mr-2 text-samuazul"></i>Administrador</span>
+                    <button onclick="sair()" class="text-gray-400 hover:text-red-500 transition flex items-center gap-2" title="Sair">
+                        <i class="fas fa-right-from-bracket"></i> Sair
+                    </button>
+                </div>
             </div>
         </header>
 
-        <main class="max-w-md mx-auto px-4 py-6 mb-10">
+        <!-- CONTEÚDO PRINCIPAL (WIDE) -->
+        <main class="max-w-7xl mx-auto px-6 py-8 w-full flex-grow">
             
-            <!-- HOME / MENU DE CARDS -->
+            <!-- VIEW: HOME -->
             <section id="view-home" class="view-section active">
-                <h2 class="text-sm font-bold text-gray-500 uppercase tracking-wider mb-4">Painel de Acesso</h2>
-                <div class="grid grid-cols-2 gap-4">
-                    <!-- Card Estoque -->
-                    <button onclick="navegar('estoque')" class="bg-white p-5 rounded-xl shadow border border-gray-100 flex flex-col items-center justify-center gap-3 hover:shadow-md transition group">
-                        <div class="w-12 h-12 rounded-full bg-blue-50 text-samuazul flex items-center justify-center text-xl group-hover:scale-110 transition">
+                <h2 class="text-base font-bold text-gray-500 uppercase tracking-wider mb-6">Painel de Acesso Rápido</h2>
+                <!-- grid-cols-4 alinha os cards lado a lado no desktop -->
+                <div class="grid grid-cols-4 gap-6">
+                    <button onclick="navegar('estoque')" class="bg-white p-8 rounded-xl shadow-sm border border-gray-200 flex flex-col items-center justify-center gap-4 hover:shadow-md hover:border-samuazul transition group">
+                        <div class="w-16 h-16 rounded-full bg-blue-50 text-samuazul flex items-center justify-center text-3xl group-hover:scale-110 transition">
                             <i class="fas fa-boxes"></i>
                         </div>
-                        <span class="font-bold text-samunavy">Estoque</span>
+                        <span class="font-bold text-samunavy text-lg">Estoque</span>
                     </button>
-                    <!-- Card Retirada -->
-                    <button onclick="navegar('retirada')" class="bg-white p-5 rounded-xl shadow border border-gray-100 flex flex-col items-center justify-center gap-3 hover:shadow-md transition group">
-                        <div class="w-12 h-12 rounded-full bg-red-50 text-red-500 flex items-center justify-center text-xl group-hover:scale-110 transition">
+                    <button onclick="navegar('retirada')" class="bg-white p-8 rounded-xl shadow-sm border border-gray-200 flex flex-col items-center justify-center gap-4 hover:shadow-md hover:border-red-300 transition group">
+                        <div class="w-16 h-16 rounded-full bg-red-50 text-red-500 flex items-center justify-center text-3xl group-hover:scale-110 transition">
                             <i class="fas fa-arrow-up-right-from-square"></i>
                         </div>
-                        <span class="font-bold text-samunavy">Retirada</span>
+                        <span class="font-bold text-samunavy text-lg">Retirada</span>
                     </button>
-                    <!-- Card Entrada -->
-                    <button onclick="navegar('entrada')" class="bg-white p-5 rounded-xl shadow border border-gray-100 flex flex-col items-center justify-center gap-3 hover:shadow-md transition group">
-                        <div class="w-12 h-12 rounded-full bg-green-50 text-green-600 flex items-center justify-center text-xl group-hover:scale-110 transition">
+                    <button onclick="navegar('entrada')" class="bg-white p-8 rounded-xl shadow-sm border border-gray-200 flex flex-col items-center justify-center gap-4 hover:shadow-md hover:border-green-300 transition group">
+                        <div class="w-16 h-16 rounded-full bg-green-50 text-green-600 flex items-center justify-center text-3xl group-hover:scale-110 transition">
                             <i class="fas fa-arrow-right-to-bracket"></i>
                         </div>
-                        <span class="font-bold text-samunavy">Entrada</span>
+                        <span class="font-bold text-samunavy text-lg">Entrada</span>
                     </button>
-                    <!-- Card Relatórios -->
-                    <button onclick="navegar('relatorios')" class="bg-white p-5 rounded-xl shadow border border-gray-100 flex flex-col items-center justify-center gap-3 hover:shadow-md transition group">
-                        <div class="w-12 h-12 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center text-xl group-hover:scale-110 transition">
+                    <button onclick="navegar('relatorios')" class="bg-white p-8 rounded-xl shadow-sm border border-gray-200 flex flex-col items-center justify-center gap-4 hover:shadow-md hover:border-purple-300 transition group">
+                        <div class="w-16 h-16 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center text-3xl group-hover:scale-110 transition">
                             <i class="fas fa-chart-pie"></i>
                         </div>
-                        <span class="font-bold text-samunavy">Relatórios</span>
+                        <span class="font-bold text-samunavy text-lg">Relatórios</span>
                     </button>
                 </div>
             </section>
 
-            <!-- VIEW: ESTOQUE -->
+            <!-- VIEW: ESTOQUE (Tabela Profissional) -->
             <section id="view-estoque" class="view-section">
-                <div class="flex justify-between items-center mb-4">
-                    <button onclick="navegar('home')" class="text-gray-500 hover:text-samuazul"><i class="fas fa-arrow-left mr-2"></i>Voltar</button>
-                    <h2 class="text-sm font-bold text-samunavy uppercase">Saldo Atual</h2>
-                </div>
-                <div class="bg-white rounded-lg shadow-sm border p-3 mb-4 flex items-center gap-2">
-                    <i class="fas fa-search text-gray-400"></i>
-                    <input type="text" placeholder="Buscar material..." class="w-full text-sm outline-none">
-                </div>
-                <!-- Exemplo de item listado -->
-                <div class="space-y-3">
-                    <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-100 flex justify-between items-center">
-                        <div>
-                            <h3 class="font-bold text-sm text-gray-800">Caneta Esferográfica Azul</h3>
-                            <p class="text-xs text-gray-500">Unidade • <span class="text-green-600">Estoque OK</span></p>
-                        </div>
-                        <div class="text-right">
-                            <span class="text-xl font-black text-samunavy">87</span>
-                        </div>
+                <div class="flex justify-between items-center mb-6">
+                    <div class="flex items-center gap-4">
+                        <button onclick="navegar('home')" class="text-gray-500 hover:text-samuazul bg-white px-4 py-2 rounded shadow-sm border transition"><i class="fas fa-arrow-left mr-2"></i>Voltar</button>
+                        <h2 class="text-lg font-bold text-samunavy uppercase">Controlo de Stock Atual</h2>
                     </div>
-                    <!-- Exemplo item baixo -->
-                    <div class="bg-red-50 p-4 rounded-lg shadow-sm border border-red-100 flex justify-between items-center">
-                        <div>
-                            <h3 class="font-bold text-sm text-gray-800">Grampo Galvanizado 26/6</h3>
-                            <p class="text-xs text-gray-500">Cx c/ 5.000 • <span class="text-red-500 font-bold"><i class="fas fa-triangle-exclamation"></i> Baixo</span></p>
-                        </div>
-                        <div class="text-right">
-                            <span class="text-xl font-black text-red-600">2</span>
-                        </div>
+                    <div class="bg-white rounded-lg shadow-sm border p-2 flex items-center gap-2 w-96">
+                        <i class="fas fa-search text-gray-400 ml-2"></i>
+                        <input type="text" placeholder="Pesquisar material pelo nome..." class="w-full text-sm outline-none p-1">
                     </div>
+                </div>
+                
+                <!-- Tabela Desktop -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                    <table class="w-full text-left">
+                        <thead>
+                            <tr class="text-xs text-gray-500 uppercase tracking-wider">
+                                <th class="p-4 font-bold">Material</th>
+                                <th class="p-4 font-bold">Unidade</th>
+                                <th class="p-4 font-bold text-center">Quantidade Atual</th>
+                                <th class="p-4 font-bold">Status</th>
+                                <th class="p-4 font-bold text-right">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-sm text-gray-700">
+                            <tr class="hover:bg-gray-50 transition">
+                                <td class="p-4 font-medium text-gray-900">Caneta Esferográfica Azul</td>
+                                <td class="p-4 text-gray-500">Unidade</td>
+                                <td class="p-4 text-center font-black text-lg text-samunavy">87</td>
+                                <td class="p-4"><span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold"><i class="fas fa-check mr-1"></i> Stock OK</span></td>
+                                <td class="p-4 text-right"><button class="text-samuazul hover:text-samunavy"><i class="fas fa-edit"></i></button></td>
+                            </tr>
+                            <tr class="hover:bg-gray-50 transition bg-red-50/30">
+                                <td class="p-4 font-medium text-gray-900">Grampo Galvanizado 26/6</td>
+                                <td class="p-4 text-gray-500">Caixa c/ 5.000</td>
+                                <td class="p-4 text-center font-black text-lg text-red-600">2</td>
+                                <td class="p-4"><span class="bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-bold"><i class="fas fa-triangle-exclamation mr-1"></i> Baixo</span></td>
+                                <td class="p-4 text-right"><button class="text-samuazul hover:text-samunavy"><i class="fas fa-edit"></i></button></td>
+                            </tr>
+                            <tr class="hover:bg-gray-50 transition">
+                                <td class="p-4 font-medium text-gray-900">Papel Sulfite A4</td>
+                                <td class="p-4 text-gray-500">Pacotes c/ 500</td>
+                                <td class="p-4 text-center font-black text-lg text-samunavy">27</td>
+                                <td class="p-4"><span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold"><i class="fas fa-check mr-1"></i> Stock OK</span></td>
+                                <td class="p-4 text-right"><button class="text-samuazul hover:text-samunavy"><i class="fas fa-edit"></i></button></td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </section>
 
-            <!-- VIEW: RETIRADA -->
+            <!-- VIEW: RETIRADA (Formulário Grid) -->
             <section id="view-retirada" class="view-section">
-                <div class="flex justify-between items-center mb-4">
-                    <button onclick="navegar('home')" class="text-gray-500 hover:text-red-500"><i class="fas fa-arrow-left mr-2"></i>Voltar</button>
-                    <h2 class="text-sm font-bold text-red-500 uppercase">Nova Retirada</h2>
+                <div class="flex items-center gap-4 mb-6">
+                    <button onclick="navegar('home')" class="text-gray-500 hover:text-red-500 bg-white px-4 py-2 rounded shadow-sm border transition"><i class="fas fa-arrow-left mr-2"></i>Voltar</button>
+                    <h2 class="text-lg font-bold text-red-500 uppercase">Registo de Retirada</h2>
                 </div>
-                <form class="bg-white p-5 rounded-lg shadow border border-gray-100 space-y-4" onsubmit="event.preventDefault(); alert('Retirada gerada com sucesso! Protocolo #REQ-001'); navegar('home');">
-                    <div>
-                        <label class="block text-[11px] font-bold text-gray-600 uppercase mb-1">Data</label>
-                        <!-- Type="datetime-local" ajuda o navegador a sugerir o momento atual -->
-                        <input type="datetime-local" id="data-retirada" class="w-full border rounded p-2 text-sm bg-gray-50" required>
+                
+                <form class="bg-white p-8 rounded-xl shadow-sm border border-gray-200" onsubmit="event.preventDefault(); alert('Retirada gerada com sucesso! Protocolo #REQ-001'); navegar('home');">
+                    <div class="grid grid-cols-3 gap-6 mb-6">
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Data e Hora</label>
+                            <input type="datetime-local" id="data-retirada" class="w-full border rounded-lg p-3 text-sm bg-gray-50 focus:ring-2 focus:ring-red-200 focus:outline-none" required>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Solicitante</label>
+                            <input type="text" placeholder="Nome do colaborador" class="w-full border rounded-lg p-3 text-sm focus:ring-2 focus:ring-red-200 focus:outline-none" required>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Setor</label>
+                            <select class="w-full border rounded-lg p-3 text-sm focus:ring-2 focus:ring-red-200 focus:outline-none" required>
+                                <option value="">Selecione o setor...</option>
+                                <option>Diretoria</option>
+                                <option>Adm</option>
+                                <option>RH</option>
+                                <option>NEP</option>
+                                <option>Coordenação Médica</option>
+                                <option>Regulação</option>
+                                <option>Farmácia</option>
+                                <option>SESMT</option>
+                                <option>Frota</option>
+                                <option>TI</option>
+                                <option>CME</option>
+                                <option>Coordenação de Enfermagem</option>
+                                <option>Financeiro</option>
+                            </select>
+                        </div>
                     </div>
-                    <div>
-                        <label class="block text-[11px] font-bold text-gray-600 uppercase mb-1">Solicitante</label>
-                        <input type="text" placeholder="Nome de quem vai usar" class="w-full border rounded p-2 text-sm" required>
+                    
+                    <div class="grid grid-cols-12 gap-6 mb-8">
+                        <div class="col-span-6">
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Material</label>
+                            <input list="lista-materiais" placeholder="Comece a digitar para procurar..." class="w-full border rounded-lg p-3 text-sm focus:ring-2 focus:ring-red-200 focus:outline-none" required>
+                        </div>
+                        <div class="col-span-2">
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Qtd</label>
+                            <input type="number" min="1" placeholder="0" class="w-full border rounded-lg p-3 text-sm focus:ring-2 focus:ring-red-200 focus:outline-none" required>
+                        </div>
+                        <div class="col-span-4">
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Observação</label>
+                            <input type="text" placeholder="Motivo ou nota adicional (Opcional)" class="w-full border rounded-lg p-3 text-sm focus:ring-2 focus:ring-red-200 focus:outline-none">
+                        </div>
                     </div>
-                    <div>
-                        <label class="block text-[11px] font-bold text-gray-600 uppercase mb-1">Setor</label>
-                        <select class="w-full border rounded p-2 text-sm bg-white" required>
-                            <option value="">Selecione...</option>
-                            <option>Diretoria</option>
-                            <option>TI</option>
-                            <option>Coordenação de Enfermagem</option>
-                            <option>Frota</option>
-                        </select>
+                    
+                    <div class="flex justify-end pt-4 border-t border-gray-100">
+                        <button type="submit" class="bg-red-500 text-white font-bold py-3 px-8 rounded-lg hover:bg-red-600 transition shadow-md flex items-center gap-2">
+                            <i class="fas fa-check"></i> Finalizar Retirada
+                        </button>
                     </div>
-                    <div>
-                        <label class="block text-[11px] font-bold text-gray-600 uppercase mb-1">Material</label>
-                        <!-- Datalist permite o efeito de autocompletar ao digitar -->
-                        <input list="lista-materiais" placeholder="Comece a digitar..." class="w-full border rounded p-2 text-sm" required>
-                        <datalist id="lista-materiais">
-                            <option value="Papel Sulfite A4"></option>
-                            <option value="Caneta Esferográfica Azul"></option>
-                        </datalist>
-                    </div>
-                    <div class="w-1/3">
-                        <label class="block text-[11px] font-bold text-gray-600 uppercase mb-1">Qtd</label>
-                        <input type="number" min="1" class="w-full border rounded p-2 text-sm" required>
-                    </div>
-                    <div>
-                        <label class="block text-[11px] font-bold text-gray-600 uppercase mb-1">Observação</label>
-                        <input type="text" placeholder="Opcional" class="w-full border rounded p-2 text-sm">
-                    </div>
-                    <button type="submit" class="w-full bg-red-500 text-white font-bold py-3 rounded-lg hover:bg-red-600 transition shadow">
-                        <i class="fas fa-check mr-2"></i> Registrar Retirada
-                    </button>
                 </form>
             </section>
 
-            <!-- VIEW: ENTRADA -->
+            <!-- VIEW: ENTRADA (Formulário Grid) -->
             <section id="view-entrada" class="view-section">
-                <div class="flex justify-between items-center mb-4">
-                    <button onclick="navegar('home')" class="text-gray-500 hover:text-green-600"><i class="fas fa-arrow-left mr-2"></i>Voltar</button>
-                    <h2 class="text-sm font-bold text-green-600 uppercase">Entrada de Material</h2>
+                <div class="flex items-center gap-4 mb-6">
+                    <button onclick="navegar('home')" class="text-gray-500 hover:text-green-600 bg-white px-4 py-2 rounded shadow-sm border transition"><i class="fas fa-arrow-left mr-2"></i>Voltar</button>
+                    <h2 class="text-lg font-bold text-green-600 uppercase">Entrada de Material Novo</h2>
                 </div>
-                <form class="bg-white p-5 rounded-lg shadow border border-gray-100 space-y-4" onsubmit="event.preventDefault(); alert('Entrada de material registrada! Protocolo #ENT-001'); navegar('home');">
-                    <div>
-                        <label class="block text-[11px] font-bold text-gray-600 uppercase mb-1">Data e Hora</label>
-                        <input type="datetime-local" id="data-entrada" class="w-full border rounded p-2 text-sm bg-gray-50" required>
+                
+                <form class="bg-white p-8 rounded-xl shadow-sm border border-gray-200" onsubmit="event.preventDefault(); alert('Entrada de material registada! Protocolo #ENT-001'); navegar('home');">
+                    <div class="grid grid-cols-2 gap-6 mb-6">
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Data e Hora</label>
+                            <input type="datetime-local" id="data-entrada" class="w-full border rounded-lg p-3 text-sm bg-gray-50 focus:ring-2 focus:ring-green-200 focus:outline-none" required>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Fornecedor / Origem</label>
+                            <input type="text" placeholder="Ex: Almoxarifado Central, Kalunga, Compra Local..." class="w-full border rounded-lg p-3 text-sm focus:ring-2 focus:ring-green-200 focus:outline-none" required>
+                        </div>
                     </div>
-                    <div>
-                        <label class="block text-[11px] font-bold text-gray-600 uppercase mb-1">Fornecedor / Origem</label>
-                        <input type="text" placeholder="Ex: Almoxarifado Central, Kalunga, etc." class="w-full border rounded p-2 text-sm" required>
+                    
+                    <div class="grid grid-cols-12 gap-6 mb-8">
+                        <div class="col-span-6">
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Material</label>
+                            <input list="lista-materiais" placeholder="Selecionar da lista ou registar novo material..." class="w-full border rounded-lg p-3 text-sm focus:ring-2 focus:ring-green-200 focus:outline-none" required>
+                        </div>
+                        <div class="col-span-2">
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Qtd</label>
+                            <input type="number" min="1" placeholder="0" class="w-full border rounded-lg p-3 text-sm focus:ring-2 focus:ring-green-200 focus:outline-none" required>
+                        </div>
+                        <div class="col-span-4">
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Nota Fiscal / Observação</label>
+                            <input type="text" placeholder="Nº da fatura ou detalhes adicionais" class="w-full border rounded-lg p-3 text-sm focus:ring-2 focus:ring-green-200 focus:outline-none">
+                        </div>
                     </div>
-                    <div>
-                        <label class="block text-[11px] font-bold text-gray-600 uppercase mb-1">Material</label>
-                        <input list="lista-materiais" placeholder="Selecionar ou digitar novo" class="w-full border rounded p-2 text-sm" required>
+
+                    <div class="flex justify-end pt-4 border-t border-gray-100">
+                        <button type="submit" class="bg-green-600 text-white font-bold py-3 px-8 rounded-lg hover:bg-green-700 transition shadow-md flex items-center gap-2">
+                            <i class="fas fa-plus"></i> Processar Entrada
+                        </button>
                     </div>
-                    <div class="w-1/3">
-                        <label class="block text-[11px] font-bold text-gray-600 uppercase mb-1">Qtd</label>
-                        <input type="number" min="1" class="w-full border rounded p-2 text-sm" required>
-                    </div>
-                    <div>
-                        <label class="block text-[11px] font-bold text-gray-600 uppercase mb-1">Nota Fiscal / Obs</label>
-                        <input type="text" placeholder="Opcional" class="w-full border rounded p-2 text-sm">
-                    </div>
-                    <button type="submit" class="w-full bg-green-600 text-white font-bold py-3 rounded-lg hover:bg-green-700 transition shadow">
-                        <i class="fas fa-plus mr-2"></i> Adicionar ao Estoque
-                    </button>
                 </form>
             </section>
 
             <!-- VIEW: RELATÓRIOS -->
             <section id="view-relatorios" class="view-section">
-                <div class="flex justify-between items-center mb-4">
-                    <button onclick="navegar('home')" class="text-gray-500 hover:text-purple-600"><i class="fas fa-arrow-left mr-2"></i>Voltar</button>
-                    <h2 class="text-sm font-bold text-purple-600 uppercase">Dashboard</h2>
+                <div class="flex items-center gap-4 mb-6">
+                    <button onclick="navegar('home')" class="text-gray-500 hover:text-purple-600 bg-white px-4 py-2 rounded shadow-sm border transition"><i class="fas fa-arrow-left mr-2"></i>Voltar</button>
+                    <h2 class="text-lg font-bold text-purple-600 uppercase">Dashboard de Relatórios</h2>
                 </div>
                 
-                <!-- Filtros -->
-                <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-100 mb-4 space-y-3">
-                    <div class="grid grid-cols-2 gap-2">
+                <div class="grid grid-cols-3 gap-6 mb-6">
+                    <!-- Filtros -->
+                    <div class="col-span-1 bg-white p-6 rounded-xl shadow-sm border border-gray-200 flex flex-col gap-4">
+                        <h3 class="font-bold text-gray-700 border-b pb-2">Filtros de Análise</h3>
                         <div>
-                            <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Data Início</label>
-                            <input type="date" class="w-full border rounded p-1.5 text-xs">
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Período</label>
+                            <div class="flex gap-2">
+                                <input type="date" class="w-1/2 border rounded p-2 text-sm text-gray-600">
+                                <input type="date" class="w-1/2 border rounded p-2 text-sm text-gray-600">
+                            </div>
                         </div>
                         <div>
-                            <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Data Fim</label>
-                            <input type="date" class="w-full border rounded p-1.5 text-xs">
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Tipo de Movimento</label>
+                            <select class="w-full border rounded p-2 text-sm text-gray-600">
+                                <option>Histórico Completo</option>
+                                <option>Apenas Entradas</option>
+                                <option>Apenas Retiradas</option>
+                            </select>
                         </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Setor / Destino</label>
+                            <select class="w-full border rounded p-2 text-sm text-gray-600">
+                                <option>Todos os Setores</option>
+                                <option>Coordenação de Enfermagem</option>
+                                <option>TI</option>
+                            </select>
+                        </div>
+                        <button class="mt-auto w-full bg-purple-50 text-purple-700 border border-purple-200 font-bold py-2 rounded-lg hover:bg-purple-100 transition shadow-sm">
+                            <i class="fas fa-filter mr-2"></i> Aplicar Filtros
+                        </button>
                     </div>
-                    <div>
-                        <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Tipo de Movimento</label>
-                        <select class="w-full border rounded p-1.5 text-xs">
-                            <option>Todos</option>
-                            <option>Apenas Entradas</option>
-                            <option>Apenas Retiradas</option>
-                        </select>
-                    </div>
-                    <button class="w-full bg-purple-50 text-purple-700 border border-purple-200 font-semibold py-1.5 rounded text-sm hover:bg-purple-100 transition">Gerar Relatório</button>
-                </div>
 
-                <!-- Gráficos Placeholder -->
-                <div class="bg-white h-40 rounded-lg shadow-sm border border-gray-100 flex items-center justify-center flex-col text-gray-400 mb-3">
-                    <i class="fas fa-chart-line text-3xl mb-2"></i>
-                    <p class="text-xs">Gráfico de Movimentações (Em breve)</p>
+                    <!-- Espaço para Gráficos -->
+                    <div class="col-span-2 flex flex-col gap-6">
+                        <div class="bg-white h-48 rounded-xl shadow-sm border border-gray-200 flex items-center justify-center flex-col text-gray-400">
+                            <i class="fas fa-chart-bar text-4xl mb-3 text-gray-300"></i>
+                            <p class="text-sm font-medium">Gráfico de Retiradas por Setor (Em breve via App Script)</p>
+                        </div>
+                        <div class="bg-white h-48 rounded-xl shadow-sm border border-gray-200 flex items-center justify-center flex-col text-gray-400">
+                            <i class="fas fa-chart-line text-4xl mb-3 text-gray-300"></i>
+                            <p class="text-sm font-medium">Evolução do Stock Mensal (Em breve via App Script)</p>
+                        </div>
+                    </div>
                 </div>
             </section>
 
         </main>
+        
+        <datalist id="lista-materiais">
+            <option value="Base Para Mouse Com Apoio Em Gel"></option>
+            <option value="Caderno Capa Dura Pequeno"></option>
+            <option value="Caneta Esferográfica Azul"></option>
+            <option value="Caneta Esferográfica Preta"></option>
+            <option value="Caneta Esferográfica Vermelha"></option>
+            <option value="Caneta Marca Texto Amarela"></option>
+            <option value="Caneta Marca Texto Verde"></option>
+            <option value="Clips Para Papel 2/0"></option>
+            <option value="Clips Para Papel 4/0"></option>
+            <option value="Cola Em Bastão"></option>
+            <option value="Corretivo Líquido"></option>
+            <option value="Envelopes Pardos A4"></option>
+            <option value="Fita Adesiva Durex (Largo)"></option>
+            <option value="Fita Dupla Face De Papel"></option>
+            <option value="Grampo Galvanizado 26/6"></option>
+            <option value="Lápis Preto HB"></option>
+            <option value="Papel Sulfite A4"></option>
+            <option value="Pasta L Em Plástico Transparente A/4"></option>
+            <option value="Post-it 38x50mm"></option>
+        </datalist>
     </div>
 
-    <!-- Scripts de Navegação Simples (Frontend Logic) -->
+    <!-- Scripts -->
     <script>
-        // Preencher hora atual nos inputs de data
         function preencherHoraAtual() {
             const agora = new Date();
             agora.setMinutes(agora.getMinutes() - agora.getTimezoneOffset());
@@ -272,9 +352,7 @@
         }
 
         function navegar(alvo) {
-            // Esconde todas as seções
             document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
-            // Mostra a seção alvo
             document.getElementById('view-' + alvo).classList.add('active');
             window.scrollTo(0, 0);
 
@@ -283,7 +361,6 @@
             }
         }
 
-        // Mock temporário para testar a tela principal
         function simularLogin() {
             document.getElementById('tela-login').classList.remove('active');
             document.getElementById('tela-login').classList.add('hidden');
