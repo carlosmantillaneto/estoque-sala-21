@@ -6,7 +6,7 @@
     <title>Controle Estoque Sala 21 - SAMU</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Phosphor Icons (Ícones Modernos) -->
+    <!-- Phosphor Icons -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <!-- Google Auth -->
     <script src="https://accounts.google.com/gsi/client" async defer></script>
@@ -51,7 +51,6 @@
         <p class="text-[10px] text-gray-400 font-bold uppercase tracking-[0.2em] mb-8">Controle de Estoque • Sala 21</p>
         
         <button onclick="simularLogin()" class="bg-white border border-gray-200 shadow-sm px-6 py-3 rounded-lg flex items-center gap-3 hover:bg-gray-50 hover:border-gray-300 text-gray-700 font-medium text-sm transition duration-200">
-            <!-- SVG Original do Google (Colorido) - Tamanho Proporcional -->
             <svg class="w-5 h-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
                 <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
@@ -66,7 +65,7 @@
     <!-- APLICAÇÃO PRINCIPAL -->
     <div id="app-conteudo" class="hidden flex flex-col min-h-screen">
         
-        <!-- HEADER ESTÁTICO (WIDE) -->
+        <!-- HEADER ESTÁTICO -->
         <header class="bg-white/90 backdrop-blur-md shadow-sm sticky top-0 z-40 linha-degrade-grossa border-b border-gray-100">
             <div class="max-w-7xl mx-auto px-6 py-3 flex justify-between items-center">
                 <div class="flex items-center gap-4 cursor-pointer group" onclick="navegar('home')">
@@ -87,7 +86,7 @@
             </div>
         </header>
 
-        <!-- CONTEÚDO PRINCIPAL (WIDE) -->
+        <!-- CONTEÚDO PRINCIPAL -->
         <main class="max-w-7xl mx-auto px-6 py-8 w-full flex-grow">
             
             <!-- VIEW: HOME -->
@@ -130,9 +129,14 @@
                         <button onclick="navegar('home')" class="text-gray-500 hover:text-samuazul flex items-center gap-1.5 mb-2 text-sm font-medium transition"><i class="ph ph-arrow-left text-base"></i> Voltar</button>
                         <h2 class="text-xl font-bold text-gray-800 tracking-tight">Estoque Atual</h2>
                     </div>
-                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-2 flex items-center gap-2 w-[400px] focus-within:border-samuazul/50 focus-within:ring-2 focus-within:ring-blue-50 transition">
-                        <i class="ph ph-magnifying-glass text-gray-400 text-lg ml-2"></i>
-                        <input type="text" placeholder="Pesquisar material..." class="w-full text-sm outline-none bg-transparent placeholder-gray-400 text-gray-700">
+                    <div class="flex items-center gap-3">
+                        <button onclick="carregarDadosEstoque()" class="bg-white border border-gray-200 text-gray-500 hover:text-samuazul hover:bg-blue-50 px-3 py-2 rounded-lg shadow-sm transition flex items-center gap-2" title="Atualizar Tabela">
+                            <i class="ph ph-arrows-clockwise text-lg"></i>
+                        </button>
+                        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-2 flex items-center gap-2 w-[350px] focus-within:border-samuazul/50 focus-within:ring-2 focus-within:ring-blue-50 transition">
+                            <i class="ph ph-magnifying-glass text-gray-400 text-lg ml-2"></i>
+                            <input type="text" id="pesquisa-estoque" oninput="filtrarTabela(this.value)" placeholder="Pesquisar material..." class="w-full text-sm outline-none bg-transparent placeholder-gray-400 text-gray-700">
+                        </div>
                     </div>
                 </div>
                 
@@ -147,28 +151,8 @@
                                 <th class="p-4 font-bold text-right">Ações</th>
                             </tr>
                         </thead>
-                        <tbody class="text-sm text-gray-700">
-                            <tr class="hover:bg-gray-50/80 transition group">
-                                <td class="p-4 font-medium text-gray-900">Caneta Esferográfica Azul</td>
-                                <td class="p-4 text-gray-500">Unidade</td>
-                                <td class="p-4 text-center font-bold text-lg text-samunavy">87</td>
-                                <td class="p-4"><span class="inline-flex items-center gap-1.5 bg-green-50 text-green-700 border border-green-200/60 px-3 py-1 rounded-full text-xs font-semibold"><i class="ph-fill ph-check-circle"></i> Estoque OK</span></td>
-                                <td class="p-4 text-right"><button class="text-gray-400 hover:text-samuazul transition"><i class="ph ph-pencil-simple text-lg"></i></button></td>
-                            </tr>
-                            <tr class="hover:bg-red-50/30 transition group">
-                                <td class="p-4 font-medium text-gray-900">Grampo Galvanizado 26/6</td>
-                                <td class="p-4 text-gray-500">Caixa c/ 5.000</td>
-                                <td class="p-4 text-center font-bold text-lg text-red-600">2</td>
-                                <td class="p-4"><span class="inline-flex items-center gap-1.5 bg-red-50 text-red-600 border border-red-200/60 px-3 py-1 rounded-full text-xs font-semibold"><i class="ph-fill ph-warning-circle"></i> Baixo</span></td>
-                                <td class="p-4 text-right"><button class="text-gray-400 hover:text-samuazul transition"><i class="ph ph-pencil-simple text-lg"></i></button></td>
-                            </tr>
-                            <tr class="hover:bg-gray-50/80 transition group">
-                                <td class="p-4 font-medium text-gray-900">Papel Sulfite A4</td>
-                                <td class="p-4 text-gray-500">Pacotes c/ 500</td>
-                                <td class="p-4 text-center font-bold text-lg text-samunavy">27</td>
-                                <td class="p-4"><span class="inline-flex items-center gap-1.5 bg-green-50 text-green-700 border border-green-200/60 px-3 py-1 rounded-full text-xs font-semibold"><i class="ph-fill ph-check-circle"></i> Estoque OK</span></td>
-                                <td class="p-4 text-right"><button class="text-gray-400 hover:text-samuazul transition"><i class="ph ph-pencil-simple text-lg"></i></button></td>
-                            </tr>
+                        <tbody id="tabela-estoque-body" class="text-sm text-gray-700">
+                            <!-- Os dados serão injetados aqui via JavaScript -->
                         </tbody>
                     </table>
                 </div>
@@ -291,7 +275,6 @@
                 </div>
                 
                 <div class="grid grid-cols-3 gap-6 mb-6">
-                    <!-- Filtros -->
                     <div class="col-span-1 bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col gap-5">
                         <div class="flex items-center gap-2 border-b border-gray-100 pb-3">
                             <i class="ph ph-funnel text-lg text-gray-400"></i>
@@ -325,7 +308,6 @@
                         </button>
                     </div>
 
-                    <!-- Espaço para Gráficos -->
                     <div class="col-span-2 flex flex-col gap-6">
                         <div class="bg-white h-48 rounded-xl shadow-sm border border-gray-100 flex items-center justify-center flex-col text-gray-400">
                             <i class="ph ph-chart-bar text-4xl mb-3"></i>
@@ -341,31 +323,108 @@
 
         </main>
         
-        <datalist id="lista-materiais">
-            <option value="Base Para Mouse Com Apoio Em Gel"></option>
-            <option value="Caderno Capa Dura Pequeno"></option>
-            <option value="Caneta Esferográfica Azul"></option>
-            <option value="Caneta Esferográfica Preta"></option>
-            <option value="Caneta Esferográfica Vermelha"></option>
-            <option value="Caneta Marca Texto Amarela"></option>
-            <option value="Caneta Marca Texto Verde"></option>
-            <option value="Clips Para Papel 2/0"></option>
-            <option value="Clips Para Papel 4/0"></option>
-            <option value="Cola Em Bastão"></option>
-            <option value="Corretivo Líquido"></option>
-            <option value="Envelopes Pardos A4"></option>
-            <option value="Fita Adesiva Durex (Largo)"></option>
-            <option value="Fita Dupla Face De Papel"></option>
-            <option value="Grampo Galvanizado 26/6"></option>
-            <option value="Lápis Preto HB"></option>
-            <option value="Papel Sulfite A4"></option>
-            <option value="Pasta L Em Plástico Transparente A/4"></option>
-            <option value="Post-it 38x50mm"></option>
-        </datalist>
+        <!-- Lista oculta para o autocompletar ser preenchido pela API -->
+        <datalist id="lista-materiais"></datalist>
     </div>
 
-    <!-- Scripts -->
+    <!-- SCRIPTS DE LÓGICA E CONEXÃO COM O BACKEND -->
     <script>
+        // URL gerada pelo Google Apps Script
+        const API_URL = "https://script.google.com/macros/s/AKfycbzz4EBdQhG_8YQv86xKE5HMJWLnKbKHDztycg0JAEvvsGykwkAtj_7-qq8CLa1maGII/exec";
+        
+        // Memória local para guardar os dados e fazer a pesquisa rápida
+        let baseEstoqueCache = []; 
+
+        // Função de Login Fake para teste (abre o sistema e puxa os dados)
+        function simularLogin() {
+            document.getElementById('tela-login').classList.remove('active');
+            document.getElementById('tela-login').classList.add('hidden');
+            document.getElementById('app-conteudo').classList.remove('hidden');
+            carregarDadosEstoque(); // Dispara o download dos dados da planilha
+        }
+
+        // Faz o Download da Planilha
+        async function carregarDadosEstoque() {
+            const tbody = document.getElementById('tabela-estoque-body');
+            const datalist = document.getElementById('lista-materiais');
+            
+            // Coloca um ícone rodando avisando que está carregando
+            tbody.innerHTML = '<tr><td colspan="5" class="p-8 text-center text-gray-400"><i class="ph ph-spinner animate-spin text-3xl mb-2 text-samuazul"></i><br>Sincronizando com o Google Sheets...</td></tr>';
+
+            try {
+                // Chama a URL
+                const response = await fetch(API_URL + "?acao=ler_estoque");
+                const result = await response.json();
+
+                if (result.status === "success") {
+                    baseEstoqueCache = result.data;
+                    renderizarTabela(baseEstoqueCache);
+                    
+                    // Preenche a lista do Autocompletar automaticamente
+                    datalist.innerHTML = '';
+                    baseEstoqueCache.forEach(item => {
+                        if (item.MATERIAL) {
+                            const option = document.createElement('option');
+                            option.value = item.MATERIAL;
+                            datalist.appendChild(option);
+                        }
+                    });
+                } else {
+                    tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-red-500 font-bold"><i class="ph ph-warning-circle text-2xl mb-2"></i><br>Erro da API: ${result.mensagem}</td></tr>`;
+                }
+            } catch (error) {
+                tbody.innerHTML = '<tr><td colspan="5" class="p-8 text-center text-red-500 font-bold"><i class="ph ph-wifi-x text-2xl mb-2"></i><br>Erro de conexão. Verifique se o link da API foi gerado como "Qualquer pessoa".</td></tr>';
+            }
+        }
+
+        // Desenha as linhas do Estoque na Tela
+        function renderizarTabela(dados) {
+            const tbody = document.getElementById('tabela-estoque-body');
+            tbody.innerHTML = '';
+
+            if (dados.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="p-8 text-center text-gray-400">Nenhum material encontrado.</td></tr>';
+                return;
+            }
+
+            dados.forEach(item => {
+                const qtd = Number(item.QUANTIDADE_ATUAL) || 0;
+                const min = Number(item.ESTOQUE_MINIMO) || 5;
+                const alertaBaixo = qtd <= min;
+
+                // Define a cor da "badge" de Status (Vermelho se baixo, Verde se OK)
+                const statusHtml = alertaBaixo 
+                    ? `<span class="inline-flex items-center gap-1.5 bg-red-50 text-red-600 border border-red-200/60 px-3 py-1 rounded-full text-xs font-semibold"><i class="ph-fill ph-warning-circle"></i> Baixo</span>`
+                    : `<span class="inline-flex items-center gap-1.5 bg-green-50 text-green-700 border border-green-200/60 px-3 py-1 rounded-full text-xs font-semibold"><i class="ph-fill ph-check-circle"></i> Estoque OK</span>`;
+
+                // Aplica uma cor avermelhada na linha se estiver acabando
+                const trClass = alertaBaixo ? "bg-red-50/20 hover:bg-red-50/40" : "hover:bg-gray-50/80";
+                const qtdColor = alertaBaixo ? "text-red-600" : "text-samunavy";
+
+                const tr = document.createElement('tr');
+                tr.className = `${trClass} transition group`;
+                tr.innerHTML = `
+                    <td class="p-4 font-medium text-gray-900 uppercase text-xs tracking-wide">${item.MATERIAL || '-'}</td>
+                    <td class="p-4 text-gray-500">${item.UNIDADE_MEDIDA || '-'}</td>
+                    <td class="p-4 text-center font-bold text-lg ${qtdColor}">${qtd}</td>
+                    <td class="p-4">${statusHtml}</td>
+                    <td class="p-4 text-right"><button class="text-gray-400 hover:text-samuazul transition"><i class="ph ph-pencil-simple text-lg"></i></button></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Função de Pesquisa Integrada (Barra superior do Estoque)
+        function filtrarTabela(texto) {
+            const pesquisa = texto.toLowerCase();
+            const dadosFiltrados = baseEstoqueCache.filter(item => {
+                const materialStr = (item.MATERIAL || "").toLowerCase();
+                return materialStr.includes(pesquisa);
+            });
+            renderizarTabela(dadosFiltrados);
+        }
+
+        // Lógica de Interface (Navegação Padrão)
         function preencherHoraAtual() {
             const agora = new Date();
             agora.setMinutes(agora.getMinutes() - agora.getTimezoneOffset());
@@ -382,12 +441,6 @@
             if (alvo === 'retirada' || alvo === 'entrada') {
                 preencherHoraAtual();
             }
-        }
-
-        function simularLogin() {
-            document.getElementById('tela-login').classList.remove('active');
-            document.getElementById('tela-login').classList.add('hidden');
-            document.getElementById('app-conteudo').classList.remove('hidden');
         }
 
         function sair() {
