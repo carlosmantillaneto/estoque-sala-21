@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="pt-PT">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Controlo Estoque Sala 21 - SAMU</title>
+    <title>Controle Estoque Sala 21 - SAMU</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Phosphor Icons -->
@@ -40,13 +40,13 @@
 </head>
 <body class="min-h-screen font-sans text-gray-800 text-sm">
     
-    <!-- ECRÃ DE LOGIN -->
+    <!-- TELA DE LOGIN -->
     <div id="tela-login" class="fixed inset-0 bg-white z-50 flex flex-col items-center justify-center px-6 text-center active">
         <div class="w-20 h-20 mb-4">
             <img src="logo-samu.jpg" alt="Logo SAMU" class="w-full h-full object-contain">
         </div>
         <h1 class="text-2xl font-bold text-samunavy mb-2 tracking-tight">SAMU - MOGI DAS CRUZES</h1>
-        <p class="text-[10px] text-gray-400 font-bold uppercase tracking-[0.2em] mb-8">Controlo de Estoque • Sala 21</p>
+        <p class="text-[10px] text-gray-400 font-bold uppercase tracking-[0.2em] mb-8">Controle de Estoque • Sala 21</p>
         
         <button onclick="simularLogin()" class="bg-white border border-gray-200 shadow-sm px-6 py-3 rounded-lg flex items-center gap-3 hover:bg-gray-50 hover:border-gray-300 text-gray-700 font-medium text-sm transition duration-200">
             <svg class="w-5 h-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -114,20 +114,56 @@
                 </div>
             </section>
 
-            <!-- VIEW: ESTOQUE (Design Profissional/Minimalista e Mais Compacto) -->
+            <!-- VIEW: ESTOQUE -->
             <section id="view-estoque" class="view-section">
-                <div class="flex justify-between items-end mb-6">
+                
+                <div class="flex justify-between items-end mb-5">
                     <div>
                         <button onclick="navegar('home')" class="text-gray-500 hover:text-samuazul flex items-center gap-1.5 mb-2 text-sm font-medium transition"><i class="ph ph-arrow-left text-base"></i> Voltar</button>
                         <h2 class="text-xl font-bold text-gray-800 tracking-tight">Estoque Atual</h2>
                     </div>
                     <div class="flex items-center gap-3">
-                        <button onclick="carregarDadosEstoque()" class="bg-white border border-gray-200 text-gray-500 hover:text-samuazul hover:bg-blue-50 px-3 py-2 rounded-lg shadow-sm transition flex items-center gap-2" title="Atualizar Tabela">
+                        <button onclick="carregarDadosEstoque()" class="bg-white border border-gray-200 text-gray-500 hover:text-samuazul hover:bg-blue-50 px-3 py-2.5 rounded-lg shadow-sm transition flex items-center gap-2" title="Atualizar Tabela">
                             <i class="ph ph-arrows-clockwise text-lg"></i>
                         </button>
-                        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-2 flex items-center gap-2 w-[350px] focus-within:border-samuazul/50 focus-within:ring-2 focus-within:ring-blue-50 transition">
+                        
+                        <!-- NOVO: Dropdown de Ordenação -->
+                        <select id="sort-estoque" onchange="atualizarTabela()" class="bg-white border border-gray-200 text-gray-600 text-sm rounded-lg p-2.5 shadow-sm outline-none focus:border-samuazul/50 focus:ring-2 focus:ring-blue-50 cursor-pointer transition">
+                            <option value="az">Ordem Alfabética (A-Z)</option>
+                            <option value="za">Ordem Alfabética (Z-A)</option>
+                            <option value="qtd-desc">Maior Quantidade</option>
+                            <option value="qtd-asc">Menor Quantidade</option>
+                            <option value="status">Itens em Baixa Primeiro</option>
+                        </select>
+
+                        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-2.5 flex items-center gap-2 w-[350px] focus-within:border-samuazul/50 focus-within:ring-2 focus-within:ring-blue-50 transition">
                             <i class="ph ph-magnifying-glass text-gray-400 text-lg ml-2"></i>
-                            <input type="text" oninput="filtrarTabela(this.value)" placeholder="Pesquisar material..." class="w-full text-sm outline-none bg-transparent placeholder-gray-400 text-gray-700">
+                            <input type="text" id="pesquisa-estoque" oninput="atualizarTabela()" placeholder="Pesquisar material..." class="w-full text-sm outline-none bg-transparent placeholder-gray-400 text-gray-700">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- NOVO: Cards de Resumo (Preenche o espaço vazio e dá contexto) -->
+                <div class="grid grid-cols-3 gap-6 mb-6">
+                    <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100 flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-full bg-blue-50 text-samuazul flex items-center justify-center text-2xl"><i class="ph ph-stack"></i></div>
+                        <div>
+                            <p class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Total de Itens Cadastrados</p>
+                            <p class="text-2xl font-black text-samunavy" id="metric-total">0</p>
+                        </div>
+                    </div>
+                    <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100 flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-full bg-green-50 text-green-600 flex items-center justify-center text-2xl"><i class="ph ph-check-circle"></i></div>
+                        <div>
+                            <p class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Itens com Estoque OK</p>
+                            <p class="text-2xl font-black text-green-700" id="metric-ok">0</p>
+                        </div>
+                    </div>
+                    <div class="bg-white p-5 rounded-xl shadow-sm border border-red-100/50 flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-full bg-red-50 text-red-500 flex items-center justify-center text-2xl"><i class="ph ph-warning-circle"></i></div>
+                        <div>
+                            <p class="text-[10px] text-red-400 font-bold uppercase tracking-widest">Itens em Baixa</p>
+                            <p class="text-2xl font-black text-red-600" id="metric-baixo">0</p>
                         </div>
                     </div>
                 </div>
@@ -135,11 +171,10 @@
                 <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
                     <table class="w-full text-left">
                         <thead>
-                            <!-- Padding do cabeçalho reduzido (py-3 px-4) -->
                             <tr class="text-[11px] text-gray-400 uppercase tracking-widest border-b border-gray-100 bg-gray-50/30">
-                                <th class="py-3 px-4 font-semibold">Material</th>
-                                <th class="py-3 px-4 font-semibold">Unidade</th>
-                                <th class="py-3 px-4 font-semibold text-right pr-6">Quantidade</th>
+                                <th class="py-3 px-6 font-semibold w-1/2">Material</th>
+                                <th class="py-3 px-6 font-semibold w-1/4">Unidade</th>
+                                <th class="py-3 px-6 font-semibold text-right pr-8 w-1/4">Quantidade</th>
                             </tr>
                         </thead>
                         <tbody id="tabela-estoque-body" class="text-sm text-gray-700"></tbody>
@@ -222,249 +257,4 @@
                     <div class="grid grid-cols-2 gap-6 mb-6">
                         <div>
                             <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-2">Data e Hora</label>
-                            <input type="datetime-local" id="ent-data" class="w-full border border-gray-200 rounded-lg p-3 text-sm bg-gray-50 focus:bg-white focus:border-green-300 focus:ring-2 focus:ring-green-50 outline-none" required>
-                        </div>
-                        <div>
-                            <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-2">Fornecedor / Origem</label>
-                            <input type="text" id="ent-fornecedor" placeholder="Ex: Almoxarifado Central" class="w-full border border-gray-200 rounded-lg p-3 text-sm focus:border-green-300 focus:ring-2 focus:ring-green-50 outline-none" required>
-                        </div>
-                    </div>
-                    
-                    <div class="grid grid-cols-12 gap-6 mb-6">
-                        <div class="col-span-6">
-                            <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-2">Material</label>
-                            <div class="relative">
-                                <i class="ph ph-plus-circle absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-lg"></i>
-                                <input list="lista-materiais" id="ent-material" placeholder="Selecionar ou cadastrar novo..." class="w-full border border-gray-200 rounded-lg p-3 pl-10 text-sm focus:border-green-300 focus:ring-2 focus:ring-green-50 outline-none" required>
-                            </div>
-                        </div>
-                        <div class="col-span-2">
-                            <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-2">Qtd</label>
-                            <input type="number" id="ent-qtd" min="1" placeholder="0" class="w-full border border-gray-200 rounded-lg p-3 text-sm focus:border-green-300 focus:ring-2 focus:ring-green-50 outline-none" required>
-                        </div>
-                        <div class="col-span-4">
-                            <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-2">Nota Fiscal / Obs</label>
-                            <input type="text" id="ent-obs" placeholder="Opcional" class="w-full border border-gray-200 rounded-lg p-3 text-sm focus:border-green-300 focus:ring-2 focus:ring-green-50 outline-none">
-                        </div>
-                    </div>
-
-                    <div class="flex justify-end pt-5 border-t border-gray-100">
-                        <button type="submit" id="btn-entrada" class="bg-gray-900 text-white font-medium text-sm py-3 px-6 rounded-lg hover:bg-gray-800 transition shadow-sm flex items-center gap-2">
-                            <i class="ph ph-plus text-lg"></i> Processar Entrada
-                        </button>
-                    </div>
-                </form>
-            </section>
-
-            <!-- VIEW: RELATÓRIOS -->
-            <section id="view-relatorios" class="view-section">
-                <div class="mb-6">
-                    <button onclick="navegar('home')" class="text-gray-500 hover:text-purple-600 flex items-center gap-1.5 mb-2 text-sm font-medium transition"><i class="ph ph-arrow-left text-base"></i> Voltar</button>
-                    <h2 class="text-xl font-bold text-gray-800 tracking-tight">Relatórios</h2>
-                </div>
-                
-                <div class="grid grid-cols-3 gap-6 mb-6">
-                    <div class="col-span-1 bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col gap-5">
-                        <div class="flex items-center gap-2 border-b border-gray-100 pb-3">
-                            <i class="ph ph-funnel text-lg text-gray-400"></i><h3 class="font-bold text-gray-800 text-sm">Filtros de Análise</h3>
-                        </div>
-                        <button class="mt-4 w-full bg-gray-50 text-gray-800 border border-gray-200 font-medium text-sm py-3 rounded-lg hover:bg-gray-100 transition shadow-sm flex items-center justify-center gap-2">Gerar Relatório</button>
-                    </div>
-                    <div class="col-span-2 flex flex-col gap-6">
-                        <div class="bg-white h-48 rounded-xl shadow-sm border border-gray-100 flex items-center justify-center flex-col text-gray-400">
-                            <i class="ph ph-chart-bar text-4xl mb-3"></i><p class="text-sm font-medium text-gray-500">Gráficos (Em Desenvolvimento)</p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-        </main>
-        
-        <datalist id="lista-materiais"></datalist>
-    </div>
-
-    <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycbzz4EBdQhG_8YQv86xKE5HMJWLnKbKHDztycg0JAEvvsGykwkAtj_7-qq8CLa1maGII/exec";
-        
-        let baseEstoqueCache = []; 
-
-        function simularLogin() {
-            document.getElementById('tela-login').classList.remove('active');
-            document.getElementById('tela-login').classList.add('hidden');
-            document.getElementById('app-conteudo').classList.remove('hidden');
-            carregarDadosEstoque(); 
-        }
-
-        async function carregarDadosEstoque() {
-            const tbody = document.getElementById('tabela-estoque-body');
-            const datalist = document.getElementById('lista-materiais');
-            tbody.innerHTML = '<tr><td colspan="3" class="p-8 text-center text-gray-400"><i class="ph ph-spinner animate-spin text-3xl mb-2 text-samuazul"></i><br>Sincronizando com o Google Sheets...</td></tr>';
-
-            try {
-                const response = await fetch(API_URL + "?acao=ler_estoque");
-                const text = await response.text(); 
-                
-                try {
-                    const result = JSON.parse(text); 
-                    if (result.status === "success") {
-                        baseEstoqueCache = result.data;
-                        renderizarTabela(baseEstoqueCache);
-                        datalist.innerHTML = '';
-                        baseEstoqueCache.forEach(item => {
-                            if (item.MATERIAL) {
-                                const option = document.createElement('option');
-                                option.value = (item.MATERIAL || '').toLowerCase().replace(/(?:^|\s)\S/g, a => a.toUpperCase());
-                                datalist.appendChild(option);
-                            }
-                        });
-                    } else {
-                        tbody.innerHTML = `<tr><td colspan="3" class="p-8 text-center text-red-500 font-bold"><i class="ph ph-warning-circle text-2xl mb-2"></i><br>Erro da Planilha: ${result.mensagem}</td></tr>`;
-                    }
-                } catch (e) {
-                    tbody.innerHTML = `<tr><td colspan="3" class="p-8 text-center text-red-500 font-bold bg-red-50 rounded-lg"><i class="ph ph-lock-key text-3xl mb-2"></i><br>Bloqueio de Segurança do Google.<br><span class="text-sm font-normal text-gray-600 mt-2 block">Verifique se gerou uma "Nova Implantação" com permissão para "Qualquer Pessoa".</span></td></tr>`;
-                }
-            } catch (error) {
-                tbody.innerHTML = '<tr><td colspan="3" class="p-8 text-center text-red-500 font-bold"><i class="ph ph-wifi-x text-2xl mb-2"></i><br>Falha na Rede ou CORS.</td></tr>';
-            }
-        }
-
-        function renderizarTabela(dados) {
-            const tbody = document.getElementById('tabela-estoque-body');
-            tbody.innerHTML = '';
-
-            if (dados.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="3" class="p-8 text-center text-gray-400">Nenhum material encontrado na planilha.</td></tr>';
-                return;
-            }
-
-            dados.forEach(item => {
-                const qtd = Number(item.QUANTIDADE_ATUAL) || 0;
-                const min = Number(item.ESTOQUE_MINIMO) || 5;
-                const alertaBaixo = qtd <= min;
-
-                const qtdColor = alertaBaixo ? "text-red-500 font-bold" : "text-gray-700 font-semibold";
-                const nomeMaterial = (item.MATERIAL || '-').toLowerCase().replace(/(?:^|\s)\S/g, a => a.toUpperCase());
-
-                const tr = document.createElement('tr');
-                tr.className = "hover:bg-gray-50/70 transition-colors border-b border-gray-50 last:border-0";
-                
-                // Redução extrema do padding nas células: py-2.5 (10px vertical) e px-4 (16px horizontal)
-                tr.innerHTML = `
-                    <td class="py-2.5 px-4 text-gray-800">${nomeMaterial}</td>
-                    <td class="py-2.5 px-4 text-gray-400 text-xs">${item.UNIDADE_MEDIDA || '-'}</td>
-                    <td class="py-2.5 px-4 text-right pr-6 text-sm ${qtdColor}">${qtd}</td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        function filtrarTabela(texto) {
-            const pesquisa = texto.toLowerCase();
-            const dadosFiltrados = baseEstoqueCache.filter(item => {
-                const materialStr = (item.MATERIAL || "").toLowerCase();
-                return materialStr.includes(pesquisa);
-            });
-            renderizarTabela(dadosFiltrados);
-        }
-        
-        async function enviarRetirada(event) {
-            event.preventDefault();
-            const btn = document.getElementById('btn-retirada');
-            const iconOriginal = btn.innerHTML;
-            btn.innerHTML = '<i class="ph ph-spinner animate-spin text-lg"></i> A Salvar...';
-            btn.disabled = true;
-
-            const payload = {
-                acao: "retirada",
-                data: document.getElementById('ret-data').value,
-                solicitante: document.getElementById('ret-solicitante').value,
-                setor: document.getElementById('ret-setor').value,
-                material: document.getElementById('ret-material').value.toUpperCase(),
-                qtd: document.getElementById('ret-qtd').value,
-                obs: document.getElementById('ret-obs').value
-            };
-
-            try {
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify(payload)
-                });
-                const result = await response.json();
-                if(result.status === "success") {
-                    document.getElementById('form-retirada').reset();
-                    await carregarDadosEstoque(); 
-                    navegar('estoque'); 
-                } else {
-                    alert("Erro na folha de cálculo: " + result.mensagem);
-                }
-            } catch (erro) {
-                alert("Erro de ligação ao enviar a retirada.");
-            } finally {
-                btn.innerHTML = iconOriginal;
-                btn.disabled = false;
-            }
-        }
-
-        async function enviarEntrada(event) {
-            event.preventDefault();
-            const btn = document.getElementById('btn-entrada');
-            const iconOriginal = btn.innerHTML;
-            btn.innerHTML = '<i class="ph ph-spinner animate-spin text-lg"></i> A Adicionar...';
-            btn.disabled = true;
-
-            const payload = {
-                acao: "entrada",
-                data: document.getElementById('ent-data').value,
-                fornecedor: document.getElementById('ent-fornecedor').value,
-                material: document.getElementById('ent-material').value.toUpperCase(),
-                qtd: document.getElementById('ent-qtd').value,
-                obs: document.getElementById('ent-obs').value
-            };
-
-            try {
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify(payload)
-                });
-                const result = await response.json();
-                if(result.status === "success") {
-                    document.getElementById('form-entrada').reset();
-                    await carregarDadosEstoque();
-                    navegar('estoque');
-                } else {
-                    alert("Erro na folha de cálculo: " + result.mensagem);
-                }
-            } catch (erro) {
-                alert("Erro de ligação ao enviar a entrada.");
-            } finally {
-                btn.innerHTML = iconOriginal;
-                btn.disabled = false;
-            }
-        }
-
-        function preencherHoraAtual() {
-            const agora = new Date();
-            agora.setMinutes(agora.getMinutes() - agora.getTimezoneOffset());
-            const dataFormatada = agora.toISOString().slice(0, 16);
-            document.getElementById('ret-data').value = dataFormatada;
-            document.getElementById('ent-data').value = dataFormatada;
-        }
-
-        function navegar(alvo) {
-            document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
-            document.getElementById('view-' + alvo).classList.add('active');
-            window.scrollTo(0, 0);
-            if (alvo === 'retirada' || alvo === 'entrada') {
-                preencherHoraAtual();
-            }
-        }
-
-        function sair() {
-            document.getElementById('app-conteudo').classList.add('hidden');
-            document.getElementById('tela-login').classList.remove('hidden');
-            document.getElementById('tela-login').classList.add('active');
-        }
-    </script>
-</body>
-</html>
+                            <input type="datetime-local" id="ent-data" class="w-full border border-gray-200 rounded-lg p-3 text-sm bg-gray-50 focus:bg-white focus:border-green-300 focus:ring-2 focus
