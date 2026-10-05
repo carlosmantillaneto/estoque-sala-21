@@ -4,11 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Controle Estoque Sala 21 - SAMU</title>
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Phosphor Icons -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    <!-- Google Auth -->
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script>
         tailwind.config = { 
@@ -65,7 +62,6 @@
     <!-- APLICAÇÃO PRINCIPAL -->
     <div id="app-conteudo" class="hidden flex flex-col min-h-screen">
         
-        <!-- HEADER ESTÁTICO -->
         <header class="bg-white/90 backdrop-blur-md shadow-sm sticky top-0 z-40 linha-degrade-grossa border-b border-gray-100">
             <div class="max-w-7xl mx-auto px-6 py-3 flex justify-between items-center">
                 <div class="flex items-center gap-4 cursor-pointer group" onclick="navegar('home')">
@@ -86,7 +82,6 @@
             </div>
         </header>
 
-        <!-- CONTEÚDO PRINCIPAL -->
         <main class="max-w-7xl mx-auto px-6 py-8 w-full flex-grow">
             
             <!-- VIEW: HOME -->
@@ -152,7 +147,7 @@
                             </tr>
                         </thead>
                         <tbody id="tabela-estoque-body" class="text-sm text-gray-700">
-                            <!-- Os dados serão injetados aqui via JavaScript -->
+                            <!-- Injetado via JS -->
                         </tbody>
                     </table>
                 </div>
@@ -320,70 +315,66 @@
                     </div>
                 </div>
             </section>
-
         </main>
         
-        <!-- Lista oculta para o autocompletar ser preenchido pela API -->
         <datalist id="lista-materiais"></datalist>
     </div>
 
-    <!-- SCRIPTS DE LÓGICA E CONEXÃO COM O BACKEND -->
     <script>
-        // URL gerada pelo Google Apps Script
+        // --- COLOQUE SUA NOVA URL AQUI APÓS O PASSO 1 ---
         const API_URL = "https://script.google.com/macros/s/AKfycbzz4EBdQhG_8YQv86xKE5HMJWLnKbKHDztycg0JAEvvsGykwkAtj_7-qq8CLa1maGII/exec";
         
-        // Memória local para guardar os dados e fazer a pesquisa rápida
         let baseEstoqueCache = []; 
 
-        // Função de Login Fake para teste (abre o sistema e puxa os dados)
         function simularLogin() {
             document.getElementById('tela-login').classList.remove('active');
             document.getElementById('tela-login').classList.add('hidden');
             document.getElementById('app-conteudo').classList.remove('hidden');
-            carregarDadosEstoque(); // Dispara o download dos dados da planilha
+            carregarDadosEstoque(); 
         }
 
-        // Faz o Download da Planilha
         async function carregarDadosEstoque() {
             const tbody = document.getElementById('tabela-estoque-body');
             const datalist = document.getElementById('lista-materiais');
-            
-            // Coloca um ícone rodando avisando que está carregando
             tbody.innerHTML = '<tr><td colspan="5" class="p-8 text-center text-gray-400"><i class="ph ph-spinner animate-spin text-3xl mb-2 text-samuazul"></i><br>Sincronizando com o Google Sheets...</td></tr>';
 
             try {
-                // Chama a URL
                 const response = await fetch(API_URL + "?acao=ler_estoque");
-                const result = await response.json();
-
-                if (result.status === "success") {
-                    baseEstoqueCache = result.data;
-                    renderizarTabela(baseEstoqueCache);
-                    
-                    // Preenche a lista do Autocompletar automaticamente
-                    datalist.innerHTML = '';
-                    baseEstoqueCache.forEach(item => {
-                        if (item.MATERIAL) {
-                            const option = document.createElement('option');
-                            option.value = item.MATERIAL;
-                            datalist.appendChild(option);
-                        }
-                    });
-                } else {
-                    tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-red-500 font-bold"><i class="ph ph-warning-circle text-2xl mb-2"></i><br>Erro da API: ${result.mensagem}</td></tr>`;
+                const text = await response.text(); 
+                
+                try {
+                    const result = JSON.parse(text); 
+                    if (result.status === "success") {
+                        baseEstoqueCache = result.data;
+                        renderizarTabela(baseEstoqueCache);
+                        datalist.innerHTML = '';
+                        baseEstoqueCache.forEach(item => {
+                            if (item.MATERIAL) {
+                                const option = document.createElement('option');
+                                option.value = item.MATERIAL;
+                                datalist.appendChild(option);
+                            }
+                        });
+                    } else {
+                        tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-red-500 font-bold"><i class="ph ph-warning-circle text-2xl mb-2"></i><br>Erro da Planilha: ${result.mensagem}</td></tr>`;
+                    }
+                } catch (e) {
+                    // Se o código cair aqui, significa que o Google bloqueou o acesso exigindo login
+                    console.error("API retornou HTML (Bloqueio do Google):", text);
+                    tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-red-500 font-bold bg-red-50 rounded-lg"><i class="ph ph-lock-key text-3xl mb-2"></i><br>Bloqueio de Segurança do Google.<br><span class="text-sm font-normal text-gray-600 mt-2 block">Por favor, refaça o PASSO 1 gerando uma "Nova Implantação" com permissão para "Qualquer Pessoa".</span></td></tr>`;
                 }
             } catch (error) {
-                tbody.innerHTML = '<tr><td colspan="5" class="p-8 text-center text-red-500 font-bold"><i class="ph ph-wifi-x text-2xl mb-2"></i><br>Erro de conexão. Verifique se o link da API foi gerado como "Qualquer pessoa".</td></tr>';
+                console.error("Erro no fetch:", error);
+                tbody.innerHTML = '<tr><td colspan="5" class="p-8 text-center text-red-500 font-bold"><i class="ph ph-wifi-x text-2xl mb-2"></i><br>Falha na Rede ou CORS.</td></tr>';
             }
         }
 
-        // Desenha as linhas do Estoque na Tela
         function renderizarTabela(dados) {
             const tbody = document.getElementById('tabela-estoque-body');
             tbody.innerHTML = '';
 
             if (dados.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="5" class="p-8 text-center text-gray-400">Nenhum material encontrado.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="5" class="p-8 text-center text-gray-400">Nenhum material encontrado na planilha.</td></tr>';
                 return;
             }
 
@@ -392,12 +383,10 @@
                 const min = Number(item.ESTOQUE_MINIMO) || 5;
                 const alertaBaixo = qtd <= min;
 
-                // Define a cor da "badge" de Status (Vermelho se baixo, Verde se OK)
                 const statusHtml = alertaBaixo 
                     ? `<span class="inline-flex items-center gap-1.5 bg-red-50 text-red-600 border border-red-200/60 px-3 py-1 rounded-full text-xs font-semibold"><i class="ph-fill ph-warning-circle"></i> Baixo</span>`
                     : `<span class="inline-flex items-center gap-1.5 bg-green-50 text-green-700 border border-green-200/60 px-3 py-1 rounded-full text-xs font-semibold"><i class="ph-fill ph-check-circle"></i> Estoque OK</span>`;
 
-                // Aplica uma cor avermelhada na linha se estiver acabando
                 const trClass = alertaBaixo ? "bg-red-50/20 hover:bg-red-50/40" : "hover:bg-gray-50/80";
                 const qtdColor = alertaBaixo ? "text-red-600" : "text-samunavy";
 
@@ -414,7 +403,6 @@
             });
         }
 
-        // Função de Pesquisa Integrada (Barra superior do Estoque)
         function filtrarTabela(texto) {
             const pesquisa = texto.toLowerCase();
             const dadosFiltrados = baseEstoqueCache.filter(item => {
@@ -424,7 +412,6 @@
             renderizarTabela(dadosFiltrados);
         }
 
-        // Lógica de Interface (Navegação Padrão)
         function preencherHoraAtual() {
             const agora = new Date();
             agora.setMinutes(agora.getMinutes() - agora.getTimezoneOffset());
