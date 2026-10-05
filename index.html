@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-PT">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Controle Estoque Sala 21 - SAMU</title>
+    <title>Controlo Estoque Sala 21 - SAMU</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Phosphor Icons -->
@@ -40,13 +40,13 @@
 </head>
 <body class="min-h-screen font-sans text-gray-800 text-sm">
     
-    <!-- TELA DE LOGIN -->
+    <!-- ECRÃ DE LOGIN -->
     <div id="tela-login" class="fixed inset-0 bg-white z-50 flex flex-col items-center justify-center px-6 text-center active">
         <div class="w-20 h-20 mb-4">
             <img src="logo-samu.jpg" alt="Logo SAMU" class="w-full h-full object-contain">
         </div>
         <h1 class="text-2xl font-bold text-samunavy mb-2 tracking-tight">SAMU - MOGI DAS CRUZES</h1>
-        <p class="text-[10px] text-gray-400 font-bold uppercase tracking-[0.2em] mb-8">Controle de Estoque • Sala 21</p>
+        <p class="text-[10px] text-gray-400 font-bold uppercase tracking-[0.2em] mb-8">Controlo de Estoque • Sala 21</p>
         
         <button onclick="simularLogin()" class="bg-white border border-gray-200 shadow-sm px-6 py-3 rounded-lg flex items-center gap-3 hover:bg-gray-50 hover:border-gray-300 text-gray-700 font-medium text-sm transition duration-200">
             <svg class="w-5 h-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -117,53 +117,39 @@
             <!-- VIEW: ESTOQUE -->
             <section id="view-estoque" class="view-section">
                 
-                <div class="flex justify-between items-end mb-5">
-                    <div>
-                        <button onclick="navegar('home')" class="text-gray-500 hover:text-samuazul flex items-center gap-1.5 mb-2 text-sm font-medium transition"><i class="ph ph-arrow-left text-base"></i> Voltar</button>
-                        <h2 class="text-xl font-bold text-gray-800 tracking-tight">Estoque Atual</h2>
+                <div class="mb-4">
+                    <button onclick="navegar('home')" class="text-gray-500 hover:text-samuazul flex items-center gap-1.5 mb-2 text-sm font-medium transition"><i class="ph ph-arrow-left text-base"></i> Voltar</button>
+                    <h2 class="text-xl font-bold text-gray-800 tracking-tight">Estoque Atual</h2>
+                </div>
+
+                <!-- BARRA DE FERRAMENTAS COMPACTA -->
+                <div class="flex items-center justify-between bg-white border border-gray-200 rounded-lg shadow-sm mb-4">
+                    
+                    <!-- ESQUERDA: Quantidade Total -->
+                    <div class="px-5 py-2.5 flex items-center gap-2 border-r border-gray-100">
+                        <i class="ph ph-stack text-gray-400 text-lg"></i>
+                        <span class="text-xs font-bold text-gray-500 uppercase tracking-widest">Total: <span id="metric-total" class="text-samunavy text-sm ml-1">0</span></span>
                     </div>
-                    <div class="flex items-center gap-3">
-                        <button onclick="carregarDadosEstoque()" class="bg-white border border-gray-200 text-gray-500 hover:text-samuazul hover:bg-blue-50 px-3 py-2.5 rounded-lg shadow-sm transition flex items-center gap-2" title="Atualizar Tabela">
-                            <i class="ph ph-arrows-clockwise text-lg"></i>
-                        </button>
-                        
-                        <select id="sort-estoque" onchange="atualizarTabela()" class="bg-white border border-gray-200 text-gray-600 text-sm rounded-lg p-2.5 shadow-sm outline-none focus:border-samuazul/50 focus:ring-2 focus:ring-blue-50 cursor-pointer transition">
+
+                    <!-- MEIO: Barra de Pesquisa -->
+                    <div class="flex-1 px-4 py-2.5 flex items-center relative group">
+                        <i class="ph ph-magnifying-glass text-gray-400 text-lg absolute left-4 group-focus-within:text-samuazul transition"></i>
+                        <input type="text" id="pesquisa-estoque" oninput="atualizarTabela()" placeholder="Pesquisar material pelo nome..." class="w-full text-sm outline-none bg-transparent placeholder-gray-400 text-gray-700 pl-8">
+                    </div>
+
+                    <!-- DIREITA: Filtro e Botão de Atualizar -->
+                    <div class="px-3 py-2 flex items-center gap-2 border-l border-gray-100">
+                        <i class="ph ph-sort-ascending text-gray-400 text-lg ml-2"></i>
+                        <select id="sort-estoque" onchange="atualizarTabela()" class="bg-transparent text-gray-600 text-sm outline-none cursor-pointer py-1 font-medium hover:text-gray-800 transition">
                             <option value="az">Ordem Alfabética (A-Z)</option>
                             <option value="za">Ordem Alfabética (Z-A)</option>
                             <option value="qtd-desc">Maior Quantidade</option>
                             <option value="qtd-asc">Menor Quantidade</option>
-                            <option value="status">Itens em Baixa Primeiro</option>
                         </select>
-
-                        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-2.5 flex items-center gap-2 w-[350px] focus-within:border-samuazul/50 focus-within:ring-2 focus-within:ring-blue-50 transition">
-                            <i class="ph ph-magnifying-glass text-gray-400 text-lg ml-2"></i>
-                            <input type="text" id="pesquisa-estoque" oninput="atualizarTabela()" placeholder="Pesquisar material..." class="w-full text-sm outline-none bg-transparent placeholder-gray-400 text-gray-700">
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Cards de Resumo -->
-                <div class="grid grid-cols-3 gap-6 mb-6">
-                    <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100 flex items-center gap-4">
-                        <div class="w-12 h-12 rounded-full bg-blue-50 text-samuazul flex items-center justify-center text-2xl"><i class="ph ph-stack"></i></div>
-                        <div>
-                            <p class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Total de Itens Cadastrados</p>
-                            <p class="text-2xl font-black text-samunavy" id="metric-total">0</p>
-                        </div>
-                    </div>
-                    <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100 flex items-center gap-4">
-                        <div class="w-12 h-12 rounded-full bg-green-50 text-green-600 flex items-center justify-center text-2xl"><i class="ph ph-check-circle"></i></div>
-                        <div>
-                            <p class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Itens com Estoque OK</p>
-                            <p class="text-2xl font-black text-green-700" id="metric-ok">0</p>
-                        </div>
-                    </div>
-                    <div class="bg-white p-5 rounded-xl shadow-sm border border-red-100/50 flex items-center gap-4">
-                        <div class="w-12 h-12 rounded-full bg-red-50 text-red-500 flex items-center justify-center text-2xl"><i class="ph ph-warning-circle"></i></div>
-                        <div>
-                            <p class="text-[10px] text-red-400 font-bold uppercase tracking-widest">Itens em Baixa</p>
-                            <p class="text-2xl font-black text-red-600" id="metric-baixo">0</p>
-                        </div>
+                        <div class="h-5 w-px bg-gray-200 mx-1"></div>
+                        <button onclick="carregarDadosEstoque()" class="text-gray-400 hover:text-samuazul hover:bg-blue-50 p-1.5 rounded transition flex items-center justify-center" title="Atualizar Tabela">
+                            <i class="ph ph-arrows-clockwise text-lg"></i>
+                        </button>
                     </div>
                 </div>
                 
@@ -376,30 +362,17 @@
                 const matA = (a.MATERIAL || "").toLowerCase();
                 const matB = (b.MATERIAL || "").toLowerCase();
                 const qtdA = Number(a.QUANTIDADE_ATUAL) || 0;
-                const minA = Number(a.ESTOQUE_MINIMO) || 5;
                 const qtdB = Number(b.QUANTIDADE_ATUAL) || 0;
-                const minB = Number(b.ESTOQUE_MINIMO) || 5;
 
                 if (criterio === 'az') return matA.localeCompare(matB);
                 if (criterio === 'za') return matB.localeCompare(matA);
                 if (criterio === 'qtd-desc') return qtdB - qtdA;
                 if (criterio === 'qtd-asc') return qtdA - qtdB;
-                if (criterio === 'status') {
-                    const baixoA = qtdA <= minA ? 1 : 0;
-                    const baixoB = qtdB <= minB ? 1 : 0;
-                    if (baixoA !== baixoB) return baixoB - baixoA; 
-                    return matA.localeCompare(matB); 
-                }
                 return 0;
             });
 
-            let qtdBaixo = 0;
-            baseEstoqueCache.forEach(i => {
-                if((Number(i.QUANTIDADE_ATUAL)||0) <= (Number(i.ESTOQUE_MINIMO)||5)) qtdBaixo++;
-            });
+            // Atualiza apenas a métrica de Total na barra
             document.getElementById('metric-total').innerText = baseEstoqueCache.length;
-            document.getElementById('metric-baixo').innerText = qtdBaixo;
-            document.getElementById('metric-ok').innerText = baseEstoqueCache.length - qtdBaixo;
 
             renderizarTabela(dadosManipulados);
         }
