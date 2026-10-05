@@ -4,8 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Controle Estoque Sala 21 - SAMU</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Phosphor Icons -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <!-- Google Auth -->
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script>
         tailwind.config = { 
@@ -117,7 +120,7 @@
                 </div>
             </section>
 
-            <!-- VIEW: ESTOQUE -->
+            <!-- VIEW: ESTOQUE (Sem coluna de Ações) -->
             <section id="view-estoque" class="view-section">
                 <div class="flex justify-between items-end mb-6">
                     <div>
@@ -142,8 +145,7 @@
                                 <th class="p-4 font-bold">Material</th>
                                 <th class="p-4 font-bold">Unidade</th>
                                 <th class="p-4 font-bold text-center">Quantidade</th>
-                                <th class="p-4 font-bold">Status</th>
-                                <th class="p-4 font-bold text-right">Ações</th>
+                                <th class="p-4 font-bold text-right pr-6">Status</th>
                             </tr>
                         </thead>
                         <tbody id="tabela-estoque-body" class="text-sm text-gray-700">
@@ -321,7 +323,6 @@
     </div>
 
     <script>
-        // --- COLOQUE SUA NOVA URL AQUI APÓS O PASSO 1 ---
         const API_URL = "https://script.google.com/macros/s/AKfycbzz4EBdQhG_8YQv86xKE5HMJWLnKbKHDztycg0JAEvvsGykwkAtj_7-qq8CLa1maGII/exec";
         
         let baseEstoqueCache = []; 
@@ -336,7 +337,7 @@
         async function carregarDadosEstoque() {
             const tbody = document.getElementById('tabela-estoque-body');
             const datalist = document.getElementById('lista-materiais');
-            tbody.innerHTML = '<tr><td colspan="5" class="p-8 text-center text-gray-400"><i class="ph ph-spinner animate-spin text-3xl mb-2 text-samuazul"></i><br>Sincronizando com o Google Sheets...</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="4" class="p-8 text-center text-gray-400"><i class="ph ph-spinner animate-spin text-3xl mb-2 text-samuazul"></i><br>Sincronizando com o Google Sheets...</td></tr>';
 
             try {
                 const response = await fetch(API_URL + "?acao=ler_estoque");
@@ -356,16 +357,15 @@
                             }
                         });
                     } else {
-                        tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-red-500 font-bold"><i class="ph ph-warning-circle text-2xl mb-2"></i><br>Erro da Planilha: ${result.mensagem}</td></tr>`;
+                        tbody.innerHTML = `<tr><td colspan="4" class="p-8 text-center text-red-500 font-bold"><i class="ph ph-warning-circle text-2xl mb-2"></i><br>Erro da Planilha: ${result.mensagem}</td></tr>`;
                     }
                 } catch (e) {
-                    // Se o código cair aqui, significa que o Google bloqueou o acesso exigindo login
                     console.error("API retornou HTML (Bloqueio do Google):", text);
-                    tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-red-500 font-bold bg-red-50 rounded-lg"><i class="ph ph-lock-key text-3xl mb-2"></i><br>Bloqueio de Segurança do Google.<br><span class="text-sm font-normal text-gray-600 mt-2 block">Por favor, refaça o PASSO 1 gerando uma "Nova Implantação" com permissão para "Qualquer Pessoa".</span></td></tr>`;
+                    tbody.innerHTML = `<tr><td colspan="4" class="p-8 text-center text-red-500 font-bold bg-red-50 rounded-lg"><i class="ph ph-lock-key text-3xl mb-2"></i><br>Bloqueio de Segurança do Google.<br><span class="text-sm font-normal text-gray-600 mt-2 block">Por favor, refaça o PASSO 1 gerando uma "Nova Implantação" com permissão para "Qualquer Pessoa".</span></td></tr>`;
                 }
             } catch (error) {
                 console.error("Erro no fetch:", error);
-                tbody.innerHTML = '<tr><td colspan="5" class="p-8 text-center text-red-500 font-bold"><i class="ph ph-wifi-x text-2xl mb-2"></i><br>Falha na Rede ou CORS.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="4" class="p-8 text-center text-red-500 font-bold"><i class="ph ph-wifi-x text-2xl mb-2"></i><br>Falha na Rede ou CORS.</td></tr>';
             }
         }
 
@@ -374,7 +374,7 @@
             tbody.innerHTML = '';
 
             if (dados.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="5" class="p-8 text-center text-gray-400">Nenhum material encontrado na planilha.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="4" class="p-8 text-center text-gray-400">Nenhum material encontrado na planilha.</td></tr>';
                 return;
             }
 
@@ -396,8 +396,7 @@
                     <td class="p-4 font-medium text-gray-900 uppercase text-xs tracking-wide">${item.MATERIAL || '-'}</td>
                     <td class="p-4 text-gray-500">${item.UNIDADE_MEDIDA || '-'}</td>
                     <td class="p-4 text-center font-bold text-lg ${qtdColor}">${qtd}</td>
-                    <td class="p-4">${statusHtml}</td>
-                    <td class="p-4 text-right"><button class="text-gray-400 hover:text-samuazul transition"><i class="ph ph-pencil-simple text-lg"></i></button></td>
+                    <td class="p-4 text-right pr-6">${statusHtml}</td>
                 `;
                 tbody.appendChild(tr);
             });
