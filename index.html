@@ -59,7 +59,6 @@
             </svg>
             Entrar com Google
         </button>
-        <div id="google-btn-container" class="hidden"></div> 
     </div>
 
     <!-- APLICAÇÃO PRINCIPAL -->
@@ -78,7 +77,7 @@
                 </div>
                 <div class="flex items-center gap-6">
                     <span class="text-sm text-gray-700 font-medium flex items-center gap-2"><i class="ph ph-user-circle text-lg text-samuazul"></i> Administrador</span>
-                    <button onclick="sair()" class="text-gray-500 hover:text-red-500 transition flex items-center gap-1.5 text-sm font-medium" title="Sair">
+                    <button onclick="sair()" class="text-gray-500 hover:text-red-500 transition flex items-center gap-1.5 text-sm font-medium">
                         <i class="ph ph-sign-out text-base"></i> Sair
                     </button>
                 </div>
@@ -96,21 +95,18 @@
                         </div>
                         <span class="font-semibold text-gray-700 text-base group-hover:text-samunavy">Estoque</span>
                     </button>
-                    
                     <button onclick="navegar('retirada')" class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col items-center justify-center gap-4 hover:shadow-md hover:border-red-300/50 transition-all duration-300 group">
                         <div class="w-14 h-14 rounded-full bg-red-50/50 text-red-500 flex items-center justify-center text-3xl group-hover:scale-110 transition-transform duration-300">
                             <i class="ph ph-upload-simple"></i>
                         </div>
                         <span class="font-semibold text-gray-700 text-base group-hover:text-red-600">Retirada</span>
                     </button>
-                    
                     <button onclick="navegar('entrada')" class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col items-center justify-center gap-4 hover:shadow-md hover:border-green-300/50 transition-all duration-300 group">
                         <div class="w-14 h-14 rounded-full bg-green-50/50 text-green-600 flex items-center justify-center text-3xl group-hover:scale-110 transition-transform duration-300">
                             <i class="ph ph-download-simple"></i>
                         </div>
                         <span class="font-semibold text-gray-700 text-base group-hover:text-green-700">Entrada</span>
                     </button>
-                    
                     <button onclick="navegar('relatorios')" class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col items-center justify-center gap-4 hover:shadow-md hover:border-purple-300/50 transition-all duration-300 group">
                         <div class="w-14 h-14 rounded-full bg-purple-50/50 text-purple-600 flex items-center justify-center text-3xl group-hover:scale-110 transition-transform duration-300">
                             <i class="ph ph-chart-line-up"></i>
@@ -120,7 +116,7 @@
                 </div>
             </section>
 
-            <!-- VIEW: ESTOQUE (Sem coluna de Ações) -->
+            <!-- VIEW: ESTOQUE -->
             <section id="view-estoque" class="view-section">
                 <div class="flex justify-between items-end mb-6">
                     <div>
@@ -133,7 +129,7 @@
                         </button>
                         <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-2 flex items-center gap-2 w-[350px] focus-within:border-samuazul/50 focus-within:ring-2 focus-within:ring-blue-50 transition">
                             <i class="ph ph-magnifying-glass text-gray-400 text-lg ml-2"></i>
-                            <input type="text" id="pesquisa-estoque" oninput="filtrarTabela(this.value)" placeholder="Pesquisar material..." class="w-full text-sm outline-none bg-transparent placeholder-gray-400 text-gray-700">
+                            <input type="text" oninput="filtrarTabela(this.value)" placeholder="Pesquisar material..." class="w-full text-sm outline-none bg-transparent placeholder-gray-400 text-gray-700">
                         </div>
                     </div>
                 </div>
@@ -148,9 +144,7 @@
                                 <th class="p-4 font-bold text-right pr-6">Status</th>
                             </tr>
                         </thead>
-                        <tbody id="tabela-estoque-body" class="text-sm text-gray-700">
-                            <!-- Injetado via JS -->
-                        </tbody>
+                        <tbody id="tabela-estoque-body" class="text-sm text-gray-700"></tbody>
                     </table>
                 </div>
             </section>
@@ -159,22 +153,22 @@
             <section id="view-retirada" class="view-section">
                 <div class="mb-6">
                     <button onclick="navegar('home')" class="text-gray-500 hover:text-red-500 flex items-center gap-1.5 mb-2 text-sm font-medium transition"><i class="ph ph-arrow-left text-base"></i> Voltar</button>
-                    <h2 class="text-xl font-bold text-gray-800 tracking-tight">Retirada</h2>
+                    <h2 class="text-xl font-bold text-gray-800 tracking-tight">Registro de Retirada</h2>
                 </div>
                 
-                <form class="bg-white p-6 rounded-xl shadow-sm border border-gray-100" onsubmit="event.preventDefault(); alert('Retirada gerada com sucesso! Protocolo #REQ-001'); navegar('home');">
+                <form id="form-retirada" class="bg-white p-6 rounded-xl shadow-sm border border-gray-100" onsubmit="enviarRetirada(event)">
                     <div class="grid grid-cols-3 gap-6 mb-6">
                         <div>
                             <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-2">Data e Hora</label>
-                            <input type="datetime-local" id="data-retirada" class="w-full border border-gray-200 rounded-lg p-3 text-sm bg-gray-50 focus:bg-white focus:border-red-300 focus:ring-2 focus:ring-red-50 outline-none" required>
+                            <input type="datetime-local" id="ret-data" class="w-full border border-gray-200 rounded-lg p-3 text-sm bg-gray-50 focus:bg-white focus:border-red-300 focus:ring-2 focus:ring-red-50 outline-none" required>
                         </div>
                         <div>
                             <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-2">Solicitante</label>
-                            <input type="text" placeholder="Nome do colaborador" class="w-full border border-gray-200 rounded-lg p-3 text-sm focus:border-red-300 focus:ring-2 focus:ring-red-50 outline-none placeholder-gray-400" required>
+                            <input type="text" id="ret-solicitante" placeholder="Nome do colaborador" class="w-full border border-gray-200 rounded-lg p-3 text-sm focus:border-red-300 focus:ring-2 focus:ring-red-50 outline-none" required>
                         </div>
                         <div>
                             <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-2">Setor</label>
-                            <select class="w-full border border-gray-200 rounded-lg p-3 text-sm focus:border-red-300 focus:ring-2 focus:ring-red-50 outline-none text-gray-700" required>
+                            <select id="ret-setor" class="w-full border border-gray-200 rounded-lg p-3 text-sm focus:border-red-300 focus:ring-2 focus:ring-red-50 outline-none text-gray-700" required>
                                 <option value="">Selecione o setor...</option>
                                 <option>Diretoria</option>
                                 <option>Adm</option>
@@ -198,21 +192,21 @@
                             <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-2">Material</label>
                             <div class="relative">
                                 <i class="ph ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-lg"></i>
-                                <input list="lista-materiais" placeholder="Procurar material..." class="w-full border border-gray-200 rounded-lg p-3 pl-10 text-sm focus:border-red-300 focus:ring-2 focus:ring-red-50 outline-none placeholder-gray-400" required>
+                                <input list="lista-materiais" id="ret-material" placeholder="Procurar material..." class="w-full border border-gray-200 rounded-lg p-3 pl-10 text-sm focus:border-red-300 focus:ring-2 focus:ring-red-50 outline-none" required>
                             </div>
                         </div>
                         <div class="col-span-2">
                             <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-2">Qtd</label>
-                            <input type="number" min="1" placeholder="0" class="w-full border border-gray-200 rounded-lg p-3 text-sm focus:border-red-300 focus:ring-2 focus:ring-red-50 outline-none placeholder-gray-400" required>
+                            <input type="number" id="ret-qtd" min="1" placeholder="0" class="w-full border border-gray-200 rounded-lg p-3 text-sm focus:border-red-300 focus:ring-2 focus:ring-red-50 outline-none" required>
                         </div>
                         <div class="col-span-4">
                             <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-2">Observação</label>
-                            <input type="text" placeholder="Opcional" class="w-full border border-gray-200 rounded-lg p-3 text-sm focus:border-red-300 focus:ring-2 focus:ring-red-50 outline-none placeholder-gray-400">
+                            <input type="text" id="ret-obs" placeholder="Opcional" class="w-full border border-gray-200 rounded-lg p-3 text-sm focus:border-red-300 focus:ring-2 focus:ring-red-50 outline-none">
                         </div>
                     </div>
                     
                     <div class="flex justify-end pt-5 border-t border-gray-100">
-                        <button type="submit" class="bg-gray-900 text-white font-medium text-sm py-3 px-6 rounded-lg hover:bg-gray-800 transition shadow-sm flex items-center gap-2">
+                        <button type="submit" id="btn-retirada" class="bg-gray-900 text-white font-medium text-sm py-3 px-6 rounded-lg hover:bg-gray-800 transition shadow-sm flex items-center gap-2">
                             <i class="ph ph-check-circle text-lg"></i> Finalizar Retirada
                         </button>
                     </div>
@@ -226,15 +220,15 @@
                     <h2 class="text-xl font-bold text-gray-800 tracking-tight">Entrada de Material</h2>
                 </div>
                 
-                <form class="bg-white p-6 rounded-xl shadow-sm border border-gray-100" onsubmit="event.preventDefault(); alert('Entrada de material registrada! Protocolo #ENT-001'); navegar('home');">
+                <form id="form-entrada" class="bg-white p-6 rounded-xl shadow-sm border border-gray-100" onsubmit="enviarEntrada(event)">
                     <div class="grid grid-cols-2 gap-6 mb-6">
                         <div>
                             <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-2">Data e Hora</label>
-                            <input type="datetime-local" id="data-entrada" class="w-full border border-gray-200 rounded-lg p-3 text-sm bg-gray-50 focus:bg-white focus:border-green-300 focus:ring-2 focus:ring-green-50 outline-none" required>
+                            <input type="datetime-local" id="ent-data" class="w-full border border-gray-200 rounded-lg p-3 text-sm bg-gray-50 focus:bg-white focus:border-green-300 focus:ring-2 focus:ring-green-50 outline-none" required>
                         </div>
                         <div>
                             <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-2">Fornecedor / Origem</label>
-                            <input type="text" placeholder="Ex: Almoxarifado Central" class="w-full border border-gray-200 rounded-lg p-3 text-sm focus:border-green-300 focus:ring-2 focus:ring-green-50 outline-none placeholder-gray-400" required>
+                            <input type="text" id="ent-fornecedor" placeholder="Ex: Almoxarifado Central" class="w-full border border-gray-200 rounded-lg p-3 text-sm focus:border-green-300 focus:ring-2 focus:ring-green-50 outline-none" required>
                         </div>
                     </div>
                     
@@ -243,76 +237,44 @@
                             <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-2">Material</label>
                             <div class="relative">
                                 <i class="ph ph-plus-circle absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-lg"></i>
-                                <input list="lista-materiais" placeholder="Selecionar ou cadastrar novo..." class="w-full border border-gray-200 rounded-lg p-3 pl-10 text-sm focus:border-green-300 focus:ring-2 focus:ring-green-50 outline-none placeholder-gray-400" required>
+                                <input list="lista-materiais" id="ent-material" placeholder="Selecionar ou cadastrar novo..." class="w-full border border-gray-200 rounded-lg p-3 pl-10 text-sm focus:border-green-300 focus:ring-2 focus:ring-green-50 outline-none" required>
                             </div>
                         </div>
                         <div class="col-span-2">
                             <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-2">Qtd</label>
-                            <input type="number" min="1" placeholder="0" class="w-full border border-gray-200 rounded-lg p-3 text-sm focus:border-green-300 focus:ring-2 focus:ring-green-50 outline-none placeholder-gray-400" required>
+                            <input type="number" id="ent-qtd" min="1" placeholder="0" class="w-full border border-gray-200 rounded-lg p-3 text-sm focus:border-green-300 focus:ring-2 focus:ring-green-50 outline-none" required>
                         </div>
                         <div class="col-span-4">
                             <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-2">Nota Fiscal / Obs</label>
-                            <input type="text" placeholder="Opcional" class="w-full border border-gray-200 rounded-lg p-3 text-sm focus:border-green-300 focus:ring-2 focus:ring-green-50 outline-none placeholder-gray-400">
+                            <input type="text" id="ent-obs" placeholder="Opcional" class="w-full border border-gray-200 rounded-lg p-3 text-sm focus:border-green-300 focus:ring-2 focus:ring-green-50 outline-none">
                         </div>
                     </div>
 
                     <div class="flex justify-end pt-5 border-t border-gray-100">
-                        <button type="submit" class="bg-gray-900 text-white font-medium text-sm py-3 px-6 rounded-lg hover:bg-gray-800 transition shadow-sm flex items-center gap-2">
+                        <button type="submit" id="btn-entrada" class="bg-gray-900 text-white font-medium text-sm py-3 px-6 rounded-lg hover:bg-gray-800 transition shadow-sm flex items-center gap-2">
                             <i class="ph ph-plus text-lg"></i> Processar Entrada
                         </button>
                     </div>
                 </form>
             </section>
 
-            <!-- VIEW: RELATÓRIOS -->
+            <!-- VIEW: RELATÓRIOS (Placeholder) -->
             <section id="view-relatorios" class="view-section">
+                <!-- Mantido o design da sua ultima aprovação -->
                 <div class="mb-6">
                     <button onclick="navegar('home')" class="text-gray-500 hover:text-purple-600 flex items-center gap-1.5 mb-2 text-sm font-medium transition"><i class="ph ph-arrow-left text-base"></i> Voltar</button>
                     <h2 class="text-xl font-bold text-gray-800 tracking-tight">Relatórios</h2>
                 </div>
-                
                 <div class="grid grid-cols-3 gap-6 mb-6">
                     <div class="col-span-1 bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col gap-5">
                         <div class="flex items-center gap-2 border-b border-gray-100 pb-3">
-                            <i class="ph ph-funnel text-lg text-gray-400"></i>
-                            <h3 class="font-bold text-gray-800 text-sm">Filtros de Análise</h3>
+                            <i class="ph ph-funnel text-lg text-gray-400"></i><h3 class="font-bold text-gray-800 text-sm">Filtros de Análise</h3>
                         </div>
-                        <div>
-                            <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-2">Período</label>
-                            <div class="flex gap-2">
-                                <input type="date" class="w-1/2 border border-gray-200 rounded-lg p-2.5 text-sm text-gray-700 focus:border-purple-300 outline-none">
-                                <input type="date" class="w-1/2 border border-gray-200 rounded-lg p-2.5 text-sm text-gray-700 focus:border-purple-300 outline-none">
-                            </div>
-                        </div>
-                        <div>
-                            <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-2">Tipo de Movimento</label>
-                            <select class="w-full border border-gray-200 rounded-lg p-2.5 text-sm text-gray-700 focus:border-purple-300 outline-none">
-                                <option>Histórico Completo</option>
-                                <option>Apenas Entradas</option>
-                                <option>Apenas Retiradas</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-2">Setor</label>
-                            <select class="w-full border border-gray-200 rounded-lg p-2.5 text-sm text-gray-700 focus:border-purple-300 outline-none">
-                                <option>Todos os Setores</option>
-                                <option>Coordenação de Enfermagem</option>
-                                <option>TI</option>
-                            </select>
-                        </div>
-                        <button class="mt-4 w-full bg-gray-50 text-gray-800 border border-gray-200 font-medium text-sm py-3 rounded-lg hover:bg-gray-100 transition shadow-sm flex items-center justify-center gap-2">
-                            Gerar Relatório
-                        </button>
+                        <button class="mt-4 w-full bg-gray-50 text-gray-800 border border-gray-200 font-medium text-sm py-3 rounded-lg hover:bg-gray-100 transition shadow-sm flex items-center justify-center gap-2">Gerar Relatório</button>
                     </div>
-
                     <div class="col-span-2 flex flex-col gap-6">
                         <div class="bg-white h-48 rounded-xl shadow-sm border border-gray-100 flex items-center justify-center flex-col text-gray-400">
-                            <i class="ph ph-chart-bar text-4xl mb-3"></i>
-                            <p class="text-sm font-medium text-gray-500">Gráfico de Retiradas por Setor</p>
-                        </div>
-                        <div class="bg-white h-48 rounded-xl shadow-sm border border-gray-100 flex items-center justify-center flex-col text-gray-400">
-                            <i class="ph ph-trend-up text-4xl mb-3"></i>
-                            <p class="text-sm font-medium text-gray-500">Evolução do Estoque Mensal</p>
+                            <i class="ph ph-chart-bar text-4xl mb-3"></i><p class="text-sm font-medium text-gray-500">Gráficos (Em Desenvolvimento)</p>
                         </div>
                     </div>
                 </div>
@@ -322,7 +284,9 @@
         <datalist id="lista-materiais"></datalist>
     </div>
 
+    <!-- SCRIPTS MESTRE -->
     <script>
+        // COLOQUE O SEU NOVO LINK AQUI
         const API_URL = "https://script.google.com/macros/s/AKfycbzz4EBdQhG_8YQv86xKE5HMJWLnKbKHDztycg0JAEvvsGykwkAtj_7-qq8CLa1maGII/exec";
         
         let baseEstoqueCache = []; 
@@ -341,31 +305,24 @@
 
             try {
                 const response = await fetch(API_URL + "?acao=ler_estoque");
-                const text = await response.text(); 
-                
-                try {
-                    const result = JSON.parse(text); 
-                    if (result.status === "success") {
-                        baseEstoqueCache = result.data;
-                        renderizarTabela(baseEstoqueCache);
-                        datalist.innerHTML = '';
-                        baseEstoqueCache.forEach(item => {
-                            if (item.MATERIAL) {
-                                const option = document.createElement('option');
-                                option.value = item.MATERIAL;
-                                datalist.appendChild(option);
-                            }
-                        });
-                    } else {
-                        tbody.innerHTML = `<tr><td colspan="4" class="p-8 text-center text-red-500 font-bold"><i class="ph ph-warning-circle text-2xl mb-2"></i><br>Erro da Planilha: ${result.mensagem}</td></tr>`;
-                    }
-                } catch (e) {
-                    console.error("API retornou HTML (Bloqueio do Google):", text);
-                    tbody.innerHTML = `<tr><td colspan="4" class="p-8 text-center text-red-500 font-bold bg-red-50 rounded-lg"><i class="ph ph-lock-key text-3xl mb-2"></i><br>Bloqueio de Segurança do Google.<br><span class="text-sm font-normal text-gray-600 mt-2 block">Por favor, refaça o PASSO 1 gerando uma "Nova Implantação" com permissão para "Qualquer Pessoa".</span></td></tr>`;
+                const result = await response.json(); 
+                if (result.status === "success") {
+                    baseEstoqueCache = result.data;
+                    renderizarTabela(baseEstoqueCache);
+                    
+                    // Alimenta o Autocompletar dos inputs de formulário
+                    datalist.innerHTML = '';
+                    baseEstoqueCache.forEach(item => {
+                        if (item.MATERIAL) {
+                            const option = document.createElement('option');
+                            option.value = item.MATERIAL;
+                            datalist.appendChild(option);
+                        }
+                    });
                 }
             } catch (error) {
-                console.error("Erro no fetch:", error);
-                tbody.innerHTML = '<tr><td colspan="4" class="p-8 text-center text-red-500 font-bold"><i class="ph ph-wifi-x text-2xl mb-2"></i><br>Falha na Rede ou CORS.</td></tr>';
+                console.error(error);
+                tbody.innerHTML = '<tr><td colspan="4" class="p-8 text-center text-red-500 font-bold"><i class="ph ph-wifi-x text-2xl mb-2"></i><br>Falha na Conexão.</td></tr>';
             }
         }
 
@@ -374,7 +331,7 @@
             tbody.innerHTML = '';
 
             if (dados.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="4" class="p-8 text-center text-gray-400">Nenhum material encontrado na planilha.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="4" class="p-8 text-center text-gray-400">Nenhum material encontrado.</td></tr>';
                 return;
             }
 
@@ -411,12 +368,101 @@
             renderizarTabela(dadosFiltrados);
         }
 
+        // ----------- LÓGICA DE GRAVAÇÃO (NOVIDADE) -----------
+        
+        async function enviarRetirada(event) {
+            event.preventDefault();
+            const btn = document.getElementById('btn-retirada');
+            const iconOriginal = btn.innerHTML;
+            btn.innerHTML = '<i class="ph ph-spinner animate-spin text-lg"></i> Salvando...';
+            btn.disabled = true;
+
+            const payload = {
+                acao: "retirada",
+                data: document.getElementById('ret-data').value,
+                solicitante: document.getElementById('ret-solicitante').value,
+                setor: document.getElementById('ret-setor').value,
+                material: document.getElementById('ret-material').value,
+                qtd: document.getElementById('ret-qtd').value,
+                obs: document.getElementById('ret-obs').value
+            };
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify(payload)
+                });
+                
+                const result = await response.json();
+                
+                if(result.status === "success") {
+                    alert(`Retirada gravada com sucesso!\nProtocolo Gerado: ${result.protocolo}`);
+                    document.getElementById('form-retirada').reset();
+                    // Atualiza a tabela com o novo saldo reduzido
+                    await carregarDadosEstoque(); 
+                    navegar('estoque'); // Manda o usuário para a tabela para ver a conta feita
+                } else {
+                    alert("Erro na planilha: " + result.mensagem);
+                }
+            } catch (erro) {
+                alert("Erro de internet ao enviar a retirada.");
+            } finally {
+                btn.innerHTML = iconOriginal;
+                btn.disabled = false;
+            }
+        }
+
+        async function enviarEntrada(event) {
+            event.preventDefault();
+            const btn = document.getElementById('btn-entrada');
+            const iconOriginal = btn.innerHTML;
+            btn.innerHTML = '<i class="ph ph-spinner animate-spin text-lg"></i> Adicionando...';
+            btn.disabled = true;
+
+            const payload = {
+                acao: "entrada",
+                data: document.getElementById('ent-data').value,
+                fornecedor: document.getElementById('ent-fornecedor').value,
+                material: document.getElementById('ent-material').value,
+                qtd: document.getElementById('ent-qtd').value,
+                obs: document.getElementById('ent-obs').value
+            };
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify(payload)
+                });
+                
+                const result = await response.json();
+                
+                if(result.status === "success") {
+                    alert(`Material adicionado com sucesso!\nProtocolo Gerado: ${result.protocolo}`);
+                    document.getElementById('form-entrada').reset();
+                    // Atualiza a tabela com o saldo somado
+                    await carregarDadosEstoque();
+                    navegar('estoque');
+                } else {
+                    alert("Erro na planilha: " + result.mensagem);
+                }
+            } catch (erro) {
+                alert("Erro de internet ao enviar a entrada.");
+            } finally {
+                btn.innerHTML = iconOriginal;
+                btn.disabled = false;
+            }
+        }
+
+        // -----------------------------------------------------
+
         function preencherHoraAtual() {
             const agora = new Date();
             agora.setMinutes(agora.getMinutes() - agora.getTimezoneOffset());
             const dataFormatada = agora.toISOString().slice(0, 16);
-            document.getElementById('data-retirada').value = dataFormatada;
-            document.getElementById('data-entrada').value = dataFormatada;
+            document.getElementById('ret-data').value = dataFormatada;
+            document.getElementById('ent-data').value = dataFormatada;
         }
 
         function navegar(alvo) {
