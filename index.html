@@ -114,7 +114,7 @@
                 </div>
             </section>
 
-            <!-- VIEW: ESTOQUE (Design Profissional/Minimalista) -->
+            <!-- VIEW: ESTOQUE (Design Profissional/Minimalista e Mais Compacto) -->
             <section id="view-estoque" class="view-section">
                 <div class="flex justify-between items-end mb-6">
                     <div>
@@ -135,10 +135,11 @@
                 <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
                     <table class="w-full text-left">
                         <thead>
+                            <!-- Padding do cabeçalho reduzido (py-3 px-4) -->
                             <tr class="text-[11px] text-gray-400 uppercase tracking-widest border-b border-gray-100 bg-gray-50/30">
-                                <th class="p-5 font-semibold">Material</th>
-                                <th class="p-5 font-semibold">Unidade</th>
-                                <th class="p-5 font-semibold text-right pr-8">Quantidade</th>
+                                <th class="py-3 px-4 font-semibold">Material</th>
+                                <th class="py-3 px-4 font-semibold">Unidade</th>
+                                <th class="py-3 px-4 font-semibold text-right pr-6">Quantidade</th>
                             </tr>
                         </thead>
                         <tbody id="tabela-estoque-body" class="text-sm text-gray-700"></tbody>
@@ -282,7 +283,6 @@
     </div>
 
     <script>
-        // MANTENHA A SUA URL AQUI
         const API_URL = "https://script.google.com/macros/s/AKfycbzz4EBdQhG_8YQv86xKE5HMJWLnKbKHDztycg0JAEvvsGykwkAtj_7-qq8CLa1maGII/exec";
         
         let baseEstoqueCache = []; 
@@ -309,7 +309,6 @@
                         baseEstoqueCache = result.data;
                         renderizarTabela(baseEstoqueCache);
                         datalist.innerHTML = '';
-                        // Formata a lista de sugestões (Autocompletar) para ficar bonita também
                         baseEstoqueCache.forEach(item => {
                             if (item.MATERIAL) {
                                 const option = document.createElement('option');
@@ -342,18 +341,17 @@
                 const min = Number(item.ESTOQUE_MINIMO) || 5;
                 const alertaBaixo = qtd <= min;
 
-                // Visual limpo: em vez de fundos coloridos, apenas o número da quantidade ganha destaque a vermelho
-                const qtdColor = alertaBaixo ? "text-red-500 font-bold" : "text-gray-700 font-medium";
-                
-                // Formatação: Transforma "NOME DO PRODUTO" em "Nome Do Produto"
+                const qtdColor = alertaBaixo ? "text-red-500 font-bold" : "text-gray-700 font-semibold";
                 const nomeMaterial = (item.MATERIAL || '-').toLowerCase().replace(/(?:^|\s)\S/g, a => a.toUpperCase());
 
                 const tr = document.createElement('tr');
-                tr.className = "hover:bg-gray-50/50 transition-colors border-b border-gray-50 last:border-0";
+                tr.className = "hover:bg-gray-50/70 transition-colors border-b border-gray-50 last:border-0";
+                
+                // Redução extrema do padding nas células: py-2.5 (10px vertical) e px-4 (16px horizontal)
                 tr.innerHTML = `
-                    <td class="p-5 text-gray-800">${nomeMaterial}</td>
-                    <td class="p-5 text-gray-400 text-xs">${item.UNIDADE_MEDIDA || '-'}</td>
-                    <td class="p-5 text-right pr-8 text-base ${qtdColor}">${qtd}</td>
+                    <td class="py-2.5 px-4 text-gray-800">${nomeMaterial}</td>
+                    <td class="py-2.5 px-4 text-gray-400 text-xs">${item.UNIDADE_MEDIDA || '-'}</td>
+                    <td class="py-2.5 px-4 text-right pr-6 text-sm ${qtdColor}">${qtd}</td>
                 `;
                 tbody.appendChild(tr);
             });
@@ -380,7 +378,7 @@
                 data: document.getElementById('ret-data').value,
                 solicitante: document.getElementById('ret-solicitante').value,
                 setor: document.getElementById('ret-setor').value,
-                material: document.getElementById('ret-material').value.toUpperCase(), // Envia para o Sheets em MAIÚSCULA para cruzar os dados
+                material: document.getElementById('ret-material').value.toUpperCase(),
                 qtd: document.getElementById('ret-qtd').value,
                 obs: document.getElementById('ret-obs').value
             };
@@ -418,7 +416,7 @@
                 acao: "entrada",
                 data: document.getElementById('ent-data').value,
                 fornecedor: document.getElementById('ent-fornecedor').value,
-                material: document.getElementById('ent-material').value.toUpperCase(), // Envia para o Sheets em MAIÚSCULA
+                material: document.getElementById('ent-material').value.toUpperCase(),
                 qtd: document.getElementById('ent-qtd').value,
                 obs: document.getElementById('ent-obs').value
             };
