@@ -4,54 +4,66 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Controle de Estoque Sala 21 - SAMU</title>
-    <!-- Tailwind CSS -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Phosphor Icons -->
     <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
-    <!-- Google Auth -->
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js" defer></script>
     <script>
-        tailwind.config = { 
-            theme: { 
-                extend: { 
-                    colors: { 
-                        samuazul: '#0160A4',
-                        samunavy: '#002D66',
-                        samuclaro: '#B9CDDB',
-                        samublue: '#F0F6FB'
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'ui-sans-serif', 'system-ui', '-apple-system', 'sans-serif'],
-                    }
-                } 
-            } 
-        }
+        tailwind.config = { theme: { extend: {
+            colors: { samuazul: '#0160A4', samunavy: '#002D66', samuclaro: '#B9CDDB', samublue: '#F0F6FB' },
+            fontFamily: { sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'] }
+        } } }
     </script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-        .linha-degrade-grossa { border-bottom: 3px solid transparent; border-image: linear-gradient(to right, #002D66, #0160A4, #B9CDDB) 1; }
-        body::before { content: ''; position: fixed; inset: 0; z-index: -1; pointer-events: none; background: linear-gradient(180deg, #F8FAFC 0%, #F1F5F9 100%); }
-        .view-section { display: none; }
-        .view-section.active { display: block; animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-        table { border-collapse: separate; border-spacing: 0; }
-        input, select { transition: all 0.2s ease; }
-        @media print { header, #view-relatorios .bg-white.p-5.rounded-xl.shadow-sm.border.mb-6, button { display: none !important; } }
-        :focus-visible { outline: 2px solid #0160A4; outline-offset: 2px; }
-        @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+        :root { --navy:#002D66; --azul:#0160A4; --claro:#B9CDDB; --linha:#E2E8F0; --vermelho:#D8343E; --verde:#0E9F6E; }
+        body { background: linear-gradient(180deg, #F6F9FC 0%, #E9F0F7 100%) fixed; }
+
+        /* ===== PADRÃO ÚNICO (tamanhos iguais em todas as telas) ===== */
+        i.ph { font-size: 18px; line-height: 1; }                       /* todos os ícones */
+        .card { background:#fff; border:1px solid var(--linha); border-radius:14px; box-shadow:0 1px 3px rgba(0,45,102,.06); }
+        .titulo { font-size:20px; font-weight:700; letter-spacing:-.01em; color:var(--navy); }
+        .voltar { display:inline-flex; align-items:center; gap:6px; font-size:14px; font-weight:500; color:#64748B; margin-bottom:12px; transition:.2s; }
+        .voltar:hover { color:var(--azul); }
+        .lbl { display:block; font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:.06em; color:#64748B; margin-bottom:8px; }
+        .campo { width:100%; height:44px; border:1px solid var(--linha); border-radius:10px; padding:0 14px; font-size:14px; color:#1E293B; background:#fff; outline:none; transition:.2s; }
+        .campo:focus { border-color:var(--azul); box-shadow:0 0 0 3px rgba(1,96,164,.12); }
+        .campo.icone { padding-left:42px; }
+        .campo-icone { position:absolute; left:14px; top:50%; transform:translateY(-50%); color:#94A3B8; pointer-events:none; }
+        .btn { height:44px; padding:0 20px; border-radius:10px; font-size:14px; font-weight:600; display:inline-flex; align-items:center; justify-content:center; gap:8px; transition:.2s; cursor:pointer; }
+        .btn:disabled { opacity:.5; cursor:not-allowed; }
+        .btn-primario { background:linear-gradient(135deg, var(--navy), var(--azul)); color:#fff; box-shadow:0 2px 8px rgba(1,96,164,.28); }
+        .btn-primario:hover:not(:disabled) { filter:brightness(1.12); transform:translateY(-1px); }
+        .btn-fantasma { background:#fff; color:#334155; border:1px solid var(--linha); }
+        .btn-fantasma:hover:not(:disabled) { background:#F1F5F9; border-color:#CBD5E1; }
+        .selo { width:44px; height:44px; border-radius:12px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+        .selo i.ph { font-size:22px; }
+        .selo-azul { background:#E3EEF8; color:var(--azul); } .selo-vermelho { background:#FDE8EA; color:var(--vermelho); } .selo-verde { background:#DDF5EB; color:var(--verde); }
+        thead tr { font-size:12px; text-transform:uppercase; letter-spacing:.1em; color:#94A3B8; background:#F8FAFC; border-bottom:1px solid #EEF2F6; }
+        th { padding:14px 24px; font-weight:600; } td { padding:12px 24px; }
+        tbody tr { border-bottom:1px solid #F1F5F9; transition:background .15s; } tbody tr:last-child { border-bottom:0; } tbody tr:hover { background:#F8FBFE; }
+        table { border-collapse:separate; border-spacing:0; }
+
+        .linha-degrade { border-bottom:3px solid transparent; border-image:linear-gradient(to right,#002D66,#0160A4,#B9CDDB) 1; }
+        .view-section { display:none; } .view-section.active { display:block; animation:fadeIn .3s cubic-bezier(.16,1,.3,1); }
+        @keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
+        .home-card { padding:24px; display:flex; flex-direction:column; gap:16px; text-align:left; transition:.25s; cursor:pointer; }
+        .home-card:hover { transform:translateY(-3px); box-shadow:0 10px 24px rgba(0,45,102,.12); border-color:#BFD3E6; }
+        .home-card .selo { width:56px; height:56px; border-radius:16px; } .home-card .selo i.ph { font-size:28px; }
+        :focus-visible { outline:2px solid var(--azul); outline-offset:2px; }
+        @media (prefers-reduced-motion: reduce) { * { animation:none !important; transition:none !important; } }
     </style>
 </head>
-<body class="min-h-screen font-sans text-gray-800 text-sm">
-    
-    <!-- TELA DE LOGIN -->
-    <div id="tela-login" class="fixed inset-0 bg-white z-50 flex flex-col items-center justify-center px-6 text-center active">
-        <div class="w-20 h-20 mb-4">
-            <img src="logo-samu.jpg" alt="Logo SAMU" class="w-full h-full object-contain">
-        </div>
+<body class="min-h-screen font-sans text-slate-800 text-sm">
+
+    <!-- LOGIN (apenas visual) -->
+    <div id="tela-login" class="fixed inset-0 z-50 flex flex-col items-center justify-center px-6 text-center" style="background:linear-gradient(160deg,#fff 40%,#EAF1F8 100%)">
+        <div class="w-20 h-20 mb-5"><img src="logo-samu.jpg" alt="Logo SAMU" class="w-full h-full object-contain"></div>
         <h1 class="text-2xl font-bold text-samunavy mb-2 tracking-tight">SAMU - MOGI DAS CRUZES</h1>
-        <p class="text-xs text-gray-400 font-bold uppercase tracking-[0.2em] mb-8">Controle de Estoque • Sala 21</p>
-        
-        <button onclick="simularLogin()" class="bg-white border border-gray-200 shadow-sm px-6 py-3 rounded-lg flex items-center gap-3 hover:bg-gray-50 hover:border-gray-300 text-gray-700 font-medium text-sm transition duration-200">
+        <p class="text-xs text-slate-400 font-semibold uppercase tracking-[0.2em] mb-8">Controle de Estoque • Sala 21</p>
+        <button onclick="simularLogin()" class="btn btn-fantasma shadow-sm gap-3">
             <svg class="w-5 h-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
                 <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
@@ -62,582 +74,414 @@
         </button>
     </div>
 
-    <!-- APLICAÇÃO PRINCIPAL -->
+    <!-- APLICAÇÃO -->
     <div id="app-conteudo" class="hidden flex flex-col min-h-screen">
-        
-        <header class="bg-white/90 backdrop-blur-md shadow-sm sticky top-0 z-40 linha-degrade-grossa border-b border-gray-100">
+        <header class="bg-white/90 backdrop-blur-md shadow-sm sticky top-0 z-40 linha-degrade">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex justify-between items-center">
-                <div class="flex items-center gap-4 cursor-pointer group" onclick="navegar('home')">
-                    <div class="w-10 h-10 flex items-center justify-center group-hover:opacity-80 transition">
-                        <img src="logo-samu.jpg" alt="Logo SAMU" class="w-full h-full object-contain">
-                    </div>
+                <div class="flex items-center gap-3 cursor-pointer" onclick="navegar('home')">
+                    <div class="w-10 h-10"><img src="logo-samu.jpg" alt="Logo SAMU" class="w-full h-full object-contain"></div>
                     <div>
                         <h1 class="text-base font-bold leading-tight tracking-wide text-samunavy">SAMU MOGI</h1>
-                        <p class="text-xs text-gray-500 font-bold uppercase tracking-wider mt-0.5">Estoque Sala 21</p>
+                        <p class="text-xs text-slate-500 font-semibold uppercase tracking-wider mt-0.5">Estoque Sala 21</p>
                     </div>
                 </div>
-                <div class="flex items-center gap-6">
-                    <span class="text-sm text-gray-700 font-medium flex items-center gap-2"><i class="ph ph-user-circle text-lg text-samuazul"></i> Administrador</span>
-                    <button onclick="sair()" class="text-gray-500 hover:text-red-500 transition flex items-center gap-1.5 text-sm font-medium">
-                        <i class="ph ph-sign-out text-base"></i> Sair
-                    </button>
+                <div class="flex items-center gap-5">
+                    <span class="text-sm text-slate-700 font-medium flex items-center gap-2"><i class="ph ph-user-circle text-samuazul"></i> Administrador</span>
+                    <button onclick="sair()" class="text-slate-500 hover:text-red-500 transition flex items-center gap-1.5 text-sm font-medium"><i class="ph ph-sign-out"></i> Sair</button>
                 </div>
             </div>
         </header>
 
         <main class="max-w-7xl mx-auto px-4 sm:px-6 py-8 w-full flex-grow">
-            
-            <!-- VIEW: HOME -->
+
+            <!-- HOME -->
             <section id="view-home" class="view-section active">
-                <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 pt-2">
-                    <button onclick="navegar('estoque')" class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col items-center justify-center gap-4 hover:shadow-md hover:border-samuazul/30 transition-all duration-300 group">
-                        <div class="w-14 h-14 rounded-full bg-blue-50/50 text-samuazul flex items-center justify-center text-3xl group-hover:scale-110 transition-transform duration-300">
-                            <i class="ph ph-package"></i>
-                        </div>
-                        <span class="font-semibold text-gray-700 text-base group-hover:text-samunavy">Estoque</span>
+                <div class="mb-6"><h2 class="titulo">Painel</h2><p class="text-slate-500 mt-1">Escolha uma opção para começar.</p></div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
+                    <button onclick="navegar('estoque')" class="card home-card">
+                        <div class="selo selo-azul"><i class="ph ph-package"></i></div>
+                        <div><p class="text-base font-semibold text-slate-800">Estoque</p><p id="home-resumo" class="text-xs text-slate-500 mt-1">Consultar saldo dos materiais</p></div>
                     </button>
-                    <button onclick="navegar('retirada')" class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col items-center justify-center gap-4 hover:shadow-md hover:border-red-300/50 transition-all duration-300 group">
-                        <div class="w-14 h-14 rounded-full bg-red-50/50 text-red-500 flex items-center justify-center text-3xl group-hover:scale-110 transition-transform duration-300">
-                            <i class="ph ph-upload-simple"></i>
-                        </div>
-                        <span class="font-semibold text-gray-700 text-base group-hover:text-red-600">Retirada</span>
+                    <button onclick="navegar('retirada')" class="card home-card">
+                        <div class="selo selo-vermelho"><i class="ph ph-upload-simple"></i></div>
+                        <div><p class="text-base font-semibold text-slate-800">Retirada</p><p class="text-xs text-slate-500 mt-1">Registrar saída de material</p></div>
                     </button>
-                    <button onclick="navegar('entrada')" class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col items-center justify-center gap-4 hover:shadow-md hover:border-green-300/50 transition-all duration-300 group">
-                        <div class="w-14 h-14 rounded-full bg-green-50/50 text-green-600 flex items-center justify-center text-3xl group-hover:scale-110 transition-transform duration-300">
-                            <i class="ph ph-download-simple"></i>
-                        </div>
-                        <span class="font-semibold text-gray-700 text-base group-hover:text-green-700">Entrada</span>
+                    <button onclick="navegar('entrada')" class="card home-card">
+                        <div class="selo selo-verde"><i class="ph ph-download-simple"></i></div>
+                        <div><p class="text-base font-semibold text-slate-800">Entrada</p><p class="text-xs text-slate-500 mt-1">Registrar chegada de material</p></div>
                     </button>
-                    <button onclick="navegar('relatorios')" class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col items-center justify-center gap-4 hover:shadow-md hover:border-purple-300/50 transition-all duration-300 group">
-                        <div class="w-14 h-14 rounded-full bg-purple-50/50 text-purple-600 flex items-center justify-center text-3xl group-hover:scale-110 transition-transform duration-300">
-                            <i class="ph ph-chart-line-up"></i>
-                        </div>
-                        <span class="font-semibold text-gray-700 text-base group-hover:text-purple-700">Relatórios</span>
+                    <button onclick="navegar('relatorios')" class="card home-card">
+                        <div class="selo selo-azul"><i class="ph ph-file-text"></i></div>
+                        <div><p class="text-base font-semibold text-slate-800">Relatórios</p><p class="text-xs text-slate-500 mt-1">Movimentações em PDF ou CSV</p></div>
                     </button>
                 </div>
             </section>
 
-            <!-- VIEW: ESTOQUE -->
+            <!-- ESTOQUE -->
             <section id="view-estoque" class="view-section">
-                
                 <div class="mb-4">
-                    <button onclick="navegar('home')" class="text-gray-500 hover:text-samuazul flex items-center gap-1.5 mb-2 text-sm font-medium transition"><i class="ph ph-arrow-left text-base"></i> Voltar</button>
-                    <h2 class="text-xl font-bold text-gray-800 tracking-tight">Estoque Atual</h2>
+                    <button onclick="navegar('home')" class="voltar"><i class="ph ph-arrow-left"></i> Voltar</button>
+                    <h2 class="titulo">Estoque Atual</h2>
                 </div>
-
-                <!-- BARRA DE FERRAMENTAS COMPACTA -->
-                <div class="flex flex-wrap items-center justify-between bg-white border border-gray-200 rounded-lg shadow-sm mb-4">
-                    
-                    <!-- ESQUERDA: Quantidade Total -->
-                    <div class="px-5 py-2.5 flex items-center gap-2 border-r border-gray-100">
-                        <i class="ph ph-stack text-gray-400 text-lg"></i>
-                        <span class="text-xs font-bold text-gray-500 uppercase tracking-widest">Total: <span id="metric-total" class="text-samunavy text-sm ml-1">0</span></span>
+                <div class="card flex flex-wrap items-center justify-between mb-4">
+                    <div class="px-5 py-2.5 flex items-center gap-2 border-r border-slate-100">
+                        <i class="ph ph-stack text-slate-400"></i>
+                        <span class="text-xs font-semibold text-slate-500 uppercase tracking-widest">Total: <span id="metric-total" class="text-samunavy text-sm ml-1">0</span></span>
                     </div>
-
-                    <!-- MEIO: Barra de Pesquisa -->
-                    <div class="flex-1 px-4 py-2.5 flex items-center relative group">
-                        <i class="ph ph-magnifying-glass text-gray-400 text-lg absolute left-4 group-focus-within:text-samuazul transition"></i>
-                        <input type="text" id="pesquisa-estoque" oninput="atualizarTabela()" placeholder="Pesquisar material pelo nome..." class="w-full text-sm outline-none bg-transparent placeholder-gray-400 text-gray-700 pl-8">
+                    <div class="flex-1 min-w-[200px] px-4 py-2.5 flex items-center relative group">
+                        <i class="ph ph-magnifying-glass text-slate-400 absolute left-4 group-focus-within:text-samuazul transition"></i>
+                        <input type="text" id="pesquisa-estoque" oninput="atualizarTabela()" placeholder="Pesquisar material pelo nome..." class="w-full text-sm outline-none bg-transparent placeholder-slate-400 text-slate-700 pl-8">
                     </div>
-
-                    <!-- DIREITA: Filtro e Botão de Atualizar -->
-                    <div class="px-3 py-2 flex items-center gap-2 border-l border-gray-100">
-                        <i class="ph ph-sort-ascending text-gray-400 text-lg ml-2"></i>
-                        <select id="sort-estoque" onchange="atualizarTabela()" class="bg-transparent text-gray-600 text-sm outline-none cursor-pointer py-1 font-medium hover:text-gray-800 transition">
+                    <div class="px-3 py-2 flex items-center gap-2 border-l border-slate-100">
+                        <i class="ph ph-sort-ascending text-slate-400 ml-2"></i>
+                        <select id="sort-estoque" onchange="atualizarTabela()" class="bg-transparent text-slate-600 text-sm outline-none cursor-pointer py-1 font-medium">
                             <option value="az">Ordem Alfabética (A-Z)</option>
                             <option value="za">Ordem Alfabética (Z-A)</option>
                             <option value="qtd-desc">Maior Quantidade</option>
                             <option value="qtd-asc">Menor Quantidade</option>
                         </select>
-                        <div class="h-5 w-px bg-gray-200 mx-1"></div>
-                        <button onclick="carregarDadosEstoque()" class="text-gray-400 hover:text-samuazul hover:bg-blue-50 p-1.5 rounded transition flex items-center justify-center" title="Atualizar Tabela">
-                            <i class="ph ph-arrows-clockwise text-lg"></i>
-                        </button>
+                        <div class="h-5 w-px bg-slate-200 mx-1"></div>
+                        <button onclick="carregarDadosEstoque()" class="text-slate-400 hover:text-samuazul hover:bg-samublue p-1.5 rounded-lg transition" title="Atualizar tabela"><i class="ph ph-arrows-clockwise"></i></button>
                     </div>
                 </div>
-                
-                <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-x-auto">
+                <div class="card overflow-x-auto">
                     <table class="w-full text-left">
-                        <thead>
-                            <tr class="text-xs text-gray-400 uppercase tracking-widest border-b border-gray-100 bg-gray-50/30">
-                                <th class="py-3 px-6 font-semibold w-1/2">Material</th>
-                                <th class="py-3 px-6 font-semibold w-1/4">Unidade</th>
-                                <th class="py-3 px-6 font-semibold text-right pr-8 w-1/4">Quantidade</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tabela-estoque-body" class="text-sm text-gray-700"></tbody>
+                        <thead><tr><th class="w-1/2">Material</th><th class="w-1/4">Unidade</th><th class="text-right w-1/4">Quantidade</th></tr></thead>
+                        <tbody id="tabela-estoque-body" class="text-sm text-slate-700"></tbody>
                     </table>
                 </div>
             </section>
 
-            <!-- VIEW: RETIRADA -->
+            <!-- RETIRADA -->
             <section id="view-retirada" class="view-section">
-                <div class="mb-6">
-                    <button onclick="navegar('home')" class="text-gray-500 hover:text-red-500 flex items-center gap-1.5 mb-2 text-sm font-medium transition"><i class="ph ph-arrow-left text-base"></i> Voltar</button>
-                    <h2 class="text-xl font-bold text-gray-800 tracking-tight">Registro de Retirada</h2>
+                <div class="mb-4">
+                    <button onclick="navegar('home')" class="voltar"><i class="ph ph-arrow-left"></i> Voltar</button>
+                    <h2 class="titulo">Registro de Retirada</h2>
                 </div>
-                
-                <form id="form-retirada" class="bg-white p-6 rounded-xl shadow-sm border border-gray-100" onsubmit="enviarRetirada(event)">
+                <form id="form-retirada" class="card p-6" onsubmit="enviarRetirada(event)">
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-6">
-                        <div>
-                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Data e Hora</label>
-                            <input type="datetime-local" id="ret-data" class="w-full border border-gray-200 rounded-lg p-3 text-sm bg-gray-50 focus:bg-white focus:border-red-300 focus:ring-2 focus:ring-red-50 outline-none" required>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Solicitante</label>
-                            <input type="text" id="ret-solicitante" placeholder="Nome do colaborador" class="w-full border border-gray-200 rounded-lg p-3 text-sm focus:border-red-300 focus:ring-2 focus:ring-red-50 outline-none" required>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Setor</label>
-                            <select id="ret-setor" class="w-full border border-gray-200 rounded-lg p-3 text-sm focus:border-red-300 focus:ring-2 focus:ring-red-50 outline-none text-gray-700" required>
+                        <div><label class="lbl">Data e Hora</label><input type="datetime-local" id="ret-data" class="campo" required></div>
+                        <div><label class="lbl">Solicitante</label><input type="text" id="ret-solicitante" placeholder="Nome do colaborador" class="campo" required></div>
+                        <div><label class="lbl">Setor</label>
+                            <select id="ret-setor" class="campo" required>
                                 <option value="">Selecione o setor...</option>
-                                <option>Diretoria</option>
-                                <option>Adm</option>
-                                <option>RH</option>
-                                <option>NEP</option>
-                                <option>Coordenação Médica</option>
-                                <option>Regulação</option>
-                                <option>Farmácia</option>
-                                <option>SESMT</option>
-                                <option>Frota</option>
-                                <option>TI</option>
-                                <option>CME</option>
-                                <option>Coordenação de Enfermagem</option>
-                                <option>Financeiro</option>
-                            </select>
-                        </div>
-                    </div>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-6 mb-6">
-                        <div class="md:col-span-6">
-                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Material</label>
-                            <div class="relative">
-                                <i class="ph ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-lg"></i>
-                                <input list="lista-materiais" id="ret-material" placeholder="Procurar material..." class="w-full border border-gray-200 rounded-lg p-3 pl-10 text-sm focus:border-red-300 focus:ring-2 focus:ring-red-50 outline-none" required>
-                            </div>
-                        </div>
-                        <div class="md:col-span-2">
-                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Qtd</label>
-                            <input type="number" id="ret-qtd" min="1" placeholder="0" class="w-full border border-gray-200 rounded-lg p-3 text-sm focus:border-red-300 focus:ring-2 focus:ring-red-50 outline-none" required>
-                        </div>
-                        <div class="md:col-span-4">
-                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Observação</label>
-                            <input type="text" id="ret-obs" placeholder="Opcional" class="w-full border border-gray-200 rounded-lg p-3 text-sm focus:border-red-300 focus:ring-2 focus:ring-red-50 outline-none">
-                        </div>
-                    </div>
-                    
-                    <div class="flex justify-end pt-5 border-t border-gray-100">
-                        <button type="submit" id="btn-retirada" class="bg-gray-900 text-white font-medium text-sm py-3 px-6 rounded-lg hover:bg-gray-800 transition shadow-sm flex items-center gap-2">
-                            <i class="ph ph-check-circle text-lg"></i> Finalizar Retirada
-                        </button>
-                    </div>
-                </form>
-            </section>
-
-            <!-- VIEW: ENTRADA -->
-            <section id="view-entrada" class="view-section">
-                <div class="mb-6">
-                    <button onclick="navegar('home')" class="text-gray-500 hover:text-green-600 flex items-center gap-1.5 mb-2 text-sm font-medium transition"><i class="ph ph-arrow-left text-base"></i> Voltar</button>
-                    <h2 class="text-xl font-bold text-gray-800 tracking-tight">Entrada de Material</h2>
-                </div>
-                
-                <form id="form-entrada" class="bg-white p-6 rounded-xl shadow-sm border border-gray-100" onsubmit="enviarEntrada(event)">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mb-6">
-                        <div>
-                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Data e Hora</label>
-                            <input type="datetime-local" id="ent-data" class="w-full border border-gray-200 rounded-lg p-3 text-sm bg-gray-50 focus:bg-white focus:border-green-300 focus:ring-2 focus:ring-green-50 outline-none" required>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Fornecedor / Origem</label>
-                            <input type="text" id="ent-fornecedor" placeholder="Ex: Almoxarifado Central" class="w-full border border-gray-200 rounded-lg p-3 text-sm focus:border-green-300 focus:ring-2 focus:ring-green-50 outline-none" required>
-                        </div>
-                    </div>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-6 mb-6">
-                        <div class="md:col-span-6">
-                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Material</label>
-                            <div class="relative">
-                                <i class="ph ph-plus-circle absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-lg"></i>
-                                <input list="lista-materiais" id="ent-material" placeholder="Selecionar ou cadastrar novo..." class="w-full border border-gray-200 rounded-lg p-3 pl-10 text-sm focus:border-green-300 focus:ring-2 focus:ring-green-50 outline-none" required>
-                            </div>
-                        </div>
-                        <div class="md:col-span-2">
-                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Qtd</label>
-                            <input type="number" id="ent-qtd" min="1" placeholder="0" class="w-full border border-gray-200 rounded-lg p-3 text-sm focus:border-green-300 focus:ring-2 focus:ring-green-50 outline-none" required>
-                        </div>
-                        <div class="md:col-span-4">
-                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Nota Fiscal / Obs</label>
-                            <input type="text" id="ent-obs" placeholder="Opcional" class="w-full border border-gray-200 rounded-lg p-3 text-sm focus:border-green-300 focus:ring-2 focus:ring-green-50 outline-none">
-                        </div>
-                    </div>
-
-                    <div class="flex justify-end pt-5 border-t border-gray-100">
-                        <button type="submit" id="btn-entrada" class="bg-gray-900 text-white font-medium text-sm py-3 px-6 rounded-lg hover:bg-gray-800 transition shadow-sm flex items-center gap-2">
-                            <i class="ph ph-plus text-lg"></i> Processar Entrada
-                        </button>
-                    </div>
-                </form>
-            </section>
-
-            <!-- VIEW: RELATÓRIOS -->
-            <section id="view-relatorios" class="view-section">
-                <div class="mb-6">
-                    <button onclick="navegar('home')" class="text-gray-500 hover:text-purple-600 flex items-center gap-1.5 mb-2 text-sm font-medium transition"><i class="ph ph-arrow-left text-base"></i> Voltar</button>
-                    <h2 class="text-xl font-bold text-gray-800 tracking-tight">Relatórios</h2>
-                </div>
-
-                <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100 mb-6">
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-                        <div><label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">De</label>
-                            <input type="date" id="rel-de" class="w-full border border-gray-200 rounded-lg p-3 text-sm outline-none focus:border-purple-300 focus:ring-2 focus:ring-purple-50"></div>
-                        <div><label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Até</label>
-                            <input type="date" id="rel-ate" class="w-full border border-gray-200 rounded-lg p-3 text-sm outline-none focus:border-purple-300 focus:ring-2 focus:ring-purple-50"></div>
-                        <div><label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Tipo</label>
-                            <select id="rel-tipo" class="w-full border border-gray-200 rounded-lg p-3 text-sm outline-none focus:border-purple-300 focus:ring-2 focus:ring-purple-50 text-gray-700">
-                                <option value="">Retiradas e entradas</option><option value="Retirada">Só retiradas</option><option value="Entrada">Só entradas</option>
+                                <option>Diretoria</option><option>Adm</option><option>RH</option><option>NEP</option>
+                                <option>Coordenação Médica</option><option>Regulação</option><option>Farmácia</option>
+                                <option>SESMT</option><option>Frota</option><option>TI</option><option>CME</option>
+                                <option>Coordenação de Enfermagem</option><option>Financeiro</option>
                             </select></div>
-                        <div><label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Setor</label>
-                            <select id="rel-setor" class="w-full border border-gray-200 rounded-lg p-3 text-sm outline-none focus:border-purple-300 focus:ring-2 focus:ring-purple-50 text-gray-700"><option value="">Todos os setores</option></select></div>
-                        <div><label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Material ou pessoa</label>
-                            <input type="text" id="rel-busca" placeholder="Buscar..." class="w-full border border-gray-200 rounded-lg p-3 text-sm outline-none focus:border-purple-300 focus:ring-2 focus:ring-purple-50"></div>
                     </div>
-                    <div class="flex flex-wrap justify-end gap-3 pt-5 mt-5 border-t border-gray-100">
-                        <button type="button" onclick="exportarCSV()" class="border border-gray-200 text-gray-700 font-medium text-sm py-3 px-5 rounded-lg hover:bg-gray-50 transition flex items-center gap-2"><i class="ph ph-file-csv text-lg"></i> Exportar CSV</button>
-                        <button type="button" onclick="window.print()" class="border border-gray-200 text-gray-700 font-medium text-sm py-3 px-5 rounded-lg hover:bg-gray-50 transition flex items-center gap-2"><i class="ph ph-printer text-lg"></i> Imprimir</button>
-                        <button type="button" id="btn-relatorio" onclick="gerarRelatorio()" class="bg-gray-900 text-white font-medium text-sm py-3 px-6 rounded-lg hover:bg-gray-800 transition shadow-sm flex items-center gap-2"><i class="ph ph-chart-line-up text-lg"></i> Gerar relatório</button>
+                    <div class="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-6 mb-6">
+                        <div class="md:col-span-6"><label class="lbl">Material</label>
+                            <div class="relative"><i class="ph ph-magnifying-glass campo-icone"></i>
+                                <input list="lista-materiais" id="ret-material" oninput="mostrarSaldo()" placeholder="Procurar material..." class="campo icone" required></div>
+                            <p id="ret-saldo" class="text-xs text-slate-500 mt-1.5 min-h-[16px]"></p></div>
+                        <div class="md:col-span-2"><label class="lbl">Qtd</label><input type="number" id="ret-qtd" min="1" placeholder="0" class="campo" required></div>
+                        <div class="md:col-span-4"><label class="lbl">Observação</label><input type="text" id="ret-obs" placeholder="Opcional" class="campo"></div>
+                    </div>
+                    <div class="flex justify-end pt-5 border-t border-slate-100">
+                        <button type="submit" id="btn-retirada" class="btn btn-primario"><i class="ph ph-check-circle"></i> Finalizar Retirada</button>
+                    </div>
+                </form>
+            </section>
+
+            <!-- ENTRADA -->
+            <section id="view-entrada" class="view-section">
+                <div class="mb-4">
+                    <button onclick="navegar('home')" class="voltar"><i class="ph ph-arrow-left"></i> Voltar</button>
+                    <h2 class="titulo">Entrada de Material</h2>
+                </div>
+                <form id="form-entrada" class="card p-6" onsubmit="enviarEntrada(event)">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mb-6">
+                        <div><label class="lbl">Data e Hora</label><input type="datetime-local" id="ent-data" class="campo" required></div>
+                        <div><label class="lbl">Fornecedor / Origem</label><input type="text" id="ent-fornecedor" placeholder="Ex: Almoxarifado Central" class="campo" required></div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-6 mb-6">
+                        <div class="md:col-span-6"><label class="lbl">Material</label>
+                            <div class="relative"><i class="ph ph-plus-circle campo-icone"></i>
+                                <input list="lista-materiais" id="ent-material" placeholder="Selecionar ou cadastrar novo..." class="campo icone" required></div></div>
+                        <div class="md:col-span-2"><label class="lbl">Qtd</label><input type="number" id="ent-qtd" min="1" placeholder="0" class="campo" required></div>
+                        <div class="md:col-span-4"><label class="lbl">Nota Fiscal / Obs</label><input type="text" id="ent-obs" placeholder="Opcional" class="campo"></div>
+                    </div>
+                    <div class="flex justify-end pt-5 border-t border-slate-100">
+                        <button type="submit" id="btn-entrada" class="btn btn-primario"><i class="ph ph-plus-circle"></i> Processar Entrada</button>
+                    </div>
+                </form>
+            </section>
+
+            <!-- RELATÓRIOS -->
+            <section id="view-relatorios" class="view-section">
+                <div class="mb-4">
+                    <button onclick="navegar('home')" class="voltar"><i class="ph ph-arrow-left"></i> Voltar</button>
+                    <h2 class="titulo">Relatório de Movimentações</h2>
+                </div>
+                <div class="card p-6 mb-6">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+                        <div><label class="lbl">Data inicial</label><input type="date" id="rel-de" class="campo"></div>
+                        <div><label class="lbl">Data final</label><input type="date" id="rel-ate" class="campo"></div>
+                        <div><label class="lbl">Tipo</label>
+                            <select id="rel-tipo" class="campo">
+                                <option value="">Retiradas e entradas</option><option value="Retirada">Somente retiradas</option><option value="Entrada">Somente entradas</option>
+                            </select></div>
+                    </div>
+                    <div class="flex flex-wrap justify-end gap-3 pt-5 mt-6 border-t border-slate-100">
+                        <button type="button" id="btn-csv" onclick="exportarCSV()" class="btn btn-fantasma" disabled><i class="ph ph-file-csv"></i> CSV</button>
+                        <button type="button" id="btn-pdf" onclick="exportarPDF()" class="btn btn-fantasma" disabled><i class="ph ph-file-pdf"></i> Baixar PDF</button>
+                        <button type="button" id="btn-relatorio" onclick="gerarRelatorio()" class="btn btn-primario"><i class="ph ph-magnifying-glass"></i> Gerar relatório</button>
                     </div>
                 </div>
                 <div id="rel-resultado"></div>
             </section>
         </main>
-        
         <datalist id="lista-materiais"></datalist>
     </div>
 
-    <script>
-        // MANTENHA A SUA URL AQUI
-        const API_URL = "https://script.google.com/macros/s/AKfycbzz4EBdQhG_8YQv86xKE5HMJWLnKbKHDztycg0JAEvvsGykwkAtj_7-qq8CLa1maGII/exec";
-        
-        let baseEstoqueCache = []; 
+    <div id="toast" role="status" class="hidden fixed bottom-6 left-1/2 -translate-x-1/2 bg-samunavy text-white text-sm font-medium px-5 py-3 rounded-xl shadow-lg z-[60] flex items-center gap-2"></div>
 
-        function esc(v) { return String(v == null ? '' : v).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+    <script>
+        const API_URL = "https://script.google.com/macros/s/AKfycbzz4EBdQhG_8YQv86xKE5HMJWLnKbKHDztycg0JAEvvsGykwkAtj_7-qq8CLa1maGII/exec";
+        let baseEstoqueCache = [], movimentosCache = null, relatorioAtual = [];
+
+        const esc = v => String(v == null ? '' : v).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+        const titulo = s => String(s || '').toLowerCase().replace(/(?:^|\s)\S/g, a => a.toUpperCase());
+        const minimo = i => (i.ESTOQUE_MINIMO === '' || i.ESTOQUE_MINIMO == null) ? 5 : Number(i.ESTOQUE_MINIMO);
+        const pad = n => String(n).padStart(2, '0');
+        function fmtData(v) {
+            const d = new Date(v);
+            return isNaN(d) ? String(v || '-') : pad(d.getDate()) + '/' + pad(d.getMonth() + 1) + '/' + d.getFullYear() + ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes());
+        }
+        const fmtDia = iso => iso ? iso.split('-').reverse().join('/') : '';
+        const linhaMsg = (cols, html) => '<tr><td colspan="' + cols + '" class="text-center text-slate-400" style="padding:32px">' + html + '</td></tr>';
 
         function mostrarAviso(msg) {
             const t = document.getElementById('toast');
-            t.textContent = msg;
+            t.innerHTML = '<i class="ph ph-check-circle"></i><span>' + esc(msg) + '</span>';
             t.classList.remove('hidden');
             clearTimeout(window._toast);
             window._toast = setTimeout(() => t.classList.add('hidden'), 4000);
         }
 
-
         function simularLogin() {
-            document.getElementById('tela-login').classList.remove('active');
             document.getElementById('tela-login').classList.add('hidden');
             document.getElementById('app-conteudo').classList.remove('hidden');
-            carregarDadosEstoque(); 
+            carregarDadosEstoque();
+        }
+        function sair() {
+            document.getElementById('app-conteudo').classList.add('hidden');
+            document.getElementById('tela-login').classList.remove('hidden');
         }
 
+        // ===== ESTOQUE =====
         async function carregarDadosEstoque() {
             const tbody = document.getElementById('tabela-estoque-body');
-            const datalist = document.getElementById('lista-materiais');
-            tbody.innerHTML = '<tr><td colspan="3" class="p-8 text-center text-gray-400"><i class="ph ph-spinner animate-spin text-3xl mb-2 text-samuazul"></i><br>Sincronizando com o Google Sheets...</td></tr>';
-
+            tbody.innerHTML = linhaMsg(3, '<i class="ph ph-spinner animate-spin text-samuazul"></i> Sincronizando com a planilha...');
             try {
-                const response = await fetch(API_URL + "?acao=ler_estoque");
-                const text = await response.text(); 
-                
-                try {
-                    const result = JSON.parse(text); 
-                    if (result.status === "success") {
-                        baseEstoqueCache = result.data;
-                        atualizarTabela(); 
-                        
-                        datalist.innerHTML = '';
-                        baseEstoqueCache.forEach(item => {
-                            if (item.MATERIAL) {
-                                const option = document.createElement('option');
-                                option.value = (item.MATERIAL || '').toLowerCase().replace(/(?:^|\s)\S/g, a => a.toUpperCase());
-                                datalist.appendChild(option);
-                            }
-                        });
-                    } else {
-                        tbody.innerHTML = `<tr><td colspan="3" class="p-8 text-center text-red-500 font-bold"><i class="ph ph-warning-circle text-2xl mb-2"></i><br>Erro da Planilha: ${esc(result.mensagem)}</td></tr>`;
-                    }
-                } catch (e) {
-                    tbody.innerHTML = `<tr><td colspan="3" class="p-8 text-center text-red-500 font-bold bg-red-50 rounded-lg"><i class="ph ph-lock-key text-3xl mb-2"></i><br>Bloqueio de Segurança do Google.<br><span class="text-sm font-normal text-gray-600 mt-2 block">Verifique se gerou uma "Nova Implantação" com permissão para "Qualquer Pessoa".</span></td></tr>`;
-                }
-            } catch (error) {
-                tbody.innerHTML = '<tr><td colspan="3" class="p-8 text-center text-red-500 font-bold"><i class="ph ph-wifi-x text-2xl mb-2"></i><br>Falha na Rede ou CORS.</td></tr>';
+                const result = JSON.parse(await (await fetch(API_URL + '?acao=ler_estoque')).text());
+                if (result.status !== 'success') { tbody.innerHTML = linhaMsg(3, '<span class="text-red-500 font-semibold">Erro da planilha: ' + esc(result.mensagem) + '</span>'); return; }
+                baseEstoqueCache = result.data;
+                atualizarTabela();
+                document.getElementById('lista-materiais').innerHTML = baseEstoqueCache.filter(i => i.MATERIAL).map(i => '<option value="' + esc(titulo(i.MATERIAL)) + '">').join('');
+                const baixos = baseEstoqueCache.filter(i => (Number(i.QUANTIDADE_ATUAL) || 0) <= minimo(i)).length;
+                document.getElementById('home-resumo').textContent = baseEstoqueCache.length + ' itens • ' + baixos + ' com estoque baixo';
+            } catch (e) {
+                tbody.innerHTML = linhaMsg(3, '<span class="text-red-500 font-semibold">Não foi possível carregar. Verifique a conexão e a implantação do Apps Script.</span>');
             }
         }
 
         function atualizarTabela() {
             const texto = document.getElementById('pesquisa-estoque').value.toLowerCase();
             const criterio = document.getElementById('sort-estoque').value;
-
-            let dadosManipulados = baseEstoqueCache.filter(item => {
-                const materialStr = (item.MATERIAL || "").toLowerCase();
-                return materialStr.includes(texto);
-            });
-
-            dadosManipulados.sort((a, b) => {
-                const matA = (a.MATERIAL || "").toLowerCase();
-                const matB = (b.MATERIAL || "").toLowerCase();
-                const qtdA = Number(a.QUANTIDADE_ATUAL) || 0;
-                const qtdB = Number(b.QUANTIDADE_ATUAL) || 0;
-
-                if (criterio === 'az') return matA.localeCompare(matB);
-                if (criterio === 'za') return matB.localeCompare(matA);
-                if (criterio === 'qtd-desc') return qtdB - qtdA;
-                if (criterio === 'qtd-asc') return qtdA - qtdB;
-                return 0;
-            });
-
-            // Atualiza apenas a métrica de Total na barra
-            document.getElementById('metric-total').innerText = baseEstoqueCache.length;
-
-            renderizarTabela(dadosManipulados);
+            const q = i => Number(i.QUANTIDADE_ATUAL) || 0, n = i => (i.MATERIAL || '').toLowerCase();
+            const dados = baseEstoqueCache.filter(i => n(i).includes(texto)).sort((a, b) =>
+                criterio === 'za' ? n(b).localeCompare(n(a)) : criterio === 'qtd-desc' ? q(b) - q(a) : criterio === 'qtd-asc' ? q(a) - q(b) : n(a).localeCompare(n(b)));
+            document.getElementById('metric-total').textContent = baseEstoqueCache.length;
+            document.getElementById('tabela-estoque-body').innerHTML = dados.length ? dados.map(i =>
+                '<tr><td class="font-medium text-slate-800">' + esc(titulo(i.MATERIAL || '-')) + '</td>' +
+                '<td class="text-xs text-slate-400">' + esc(i.UNIDADE_MEDIDA || '-') + '</td>' +
+                '<td class="text-right text-base ' + (q(i) <= minimo(i) ? 'text-red-500 font-bold' : 'text-slate-700 font-semibold') + '">' + q(i) + '</td></tr>').join('')
+                : linhaMsg(3, 'Nenhum material encontrado.');
         }
 
-        function renderizarTabela(dados) {
-            const tbody = document.getElementById('tabela-estoque-body');
-            tbody.innerHTML = '';
-
-            if (dados.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="3" class="p-8 text-center text-gray-400">Nenhum material encontrado.</td></tr>';
-                return;
-            }
-
-            dados.forEach(item => {
-                const qtd = Number(item.QUANTIDADE_ATUAL) || 0;
-                const min = (item.ESTOQUE_MINIMO === '' || item.ESTOQUE_MINIMO == null) ? 5 : Number(item.ESTOQUE_MINIMO);
-                const alertaBaixo = qtd <= min;
-
-                const qtdColor = alertaBaixo ? "text-red-500 font-bold" : "text-gray-700 font-semibold";
-                const nomeMaterial = (item.MATERIAL || '-').toLowerCase().replace(/(?:^|\s)\S/g, a => a.toUpperCase());
-
-                const tr = document.createElement('tr');
-                tr.className = "hover:bg-gray-50/70 transition-colors border-b border-gray-50 last:border-0";
-                
-                tr.innerHTML = `
-                    <td class="py-2.5 px-6 text-gray-800 font-medium">${esc(nomeMaterial)}</td>
-                    <td class="py-2.5 px-6 text-gray-400 text-xs">${esc(item.UNIDADE_MEDIDA || '-')}</td>
-                    <td class="py-2.5 px-6 text-right pr-8 text-base ${qtdColor}">${qtd}</td>
-                `;
-                tbody.appendChild(tr);
-            });
+        // ===== RETIRADA / ENTRADA =====
+        function acharItem(nome) {
+            const alvo = String(nome).trim().toUpperCase();
+            return baseEstoqueCache.find(i => String(i.MATERIAL).trim().toUpperCase() === alvo);
         }
-        
-        async function enviarRetirada(event) {
-            event.preventDefault();
-            const matDigitado = document.getElementById('ret-material').value.trim().toUpperCase();
-            const itemEstoque = baseEstoqueCache.find(i => String(i.MATERIAL).trim().toUpperCase() === matDigitado);
-            if (!itemEstoque) { alert('Material não encontrado no estoque. Escolha um item da lista.'); return; }
-            const saldoAtual = Number(itemEstoque.QUANTIDADE_ATUAL) || 0;
-            if (Number(document.getElementById('ret-qtd').value) > saldoAtual) { alert('Saldo insuficiente. Disponível: ' + saldoAtual); return; }
-            const btn = document.getElementById('btn-retirada');
-            const iconOriginal = btn.innerHTML;
-            btn.innerHTML = '<i class="ph ph-spinner animate-spin text-lg"></i> Salvando...';
+        function mostrarSaldo() {
+            const it = acharItem(document.getElementById('ret-material').value);
+            document.getElementById('ret-saldo').textContent = it ? 'Saldo disponível: ' + (Number(it.QUANTIDADE_ATUAL) || 0) + ' ' + String(it.UNIDADE_MEDIDA || '').toLowerCase() : '';
+        }
+
+        async function enviar(payload, btn, rotulo, formId, aviso) {
+            const original = btn.innerHTML;
+            btn.innerHTML = '<i class="ph ph-spinner animate-spin"></i> ' + rotulo;
             btn.disabled = true;
-
-            const payload = {
-                acao: "retirada",
-                data: document.getElementById('ret-data').value,
-                solicitante: document.getElementById('ret-solicitante').value,
-                setor: document.getElementById('ret-setor').value,
-                material: document.getElementById('ret-material').value.toUpperCase(),
-                qtd: document.getElementById('ret-qtd').value,
-                obs: document.getElementById('ret-obs').value
-            };
-
             try {
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify(payload)
-                });
-                const result = await response.json();
-                if(result.status === "success") {
-                    document.getElementById('form-retirada').reset();
-                    mostrarAviso('Retirada registrada • Protocolo ' + result.protocolo);
-                    await carregarDadosEstoque(); 
-                    navegar('estoque'); 
-                } else {
-                    alert("Erro na planilha: " + result.mensagem);
-                }
-            } catch (erro) {
-                alert("Erro de conexão ao enviar a retirada.");
-            } finally {
-                btn.innerHTML = iconOriginal;
-                btn.disabled = false;
-            }
-        }
-
-        async function enviarEntrada(event) {
-            event.preventDefault();
-            const btn = document.getElementById('btn-entrada');
-            const iconOriginal = btn.innerHTML;
-            btn.innerHTML = '<i class="ph ph-spinner animate-spin text-lg"></i> Adicionando...';
-            btn.disabled = true;
-
-            const payload = {
-                acao: "entrada",
-                data: document.getElementById('ent-data').value,
-                fornecedor: document.getElementById('ent-fornecedor').value,
-                material: document.getElementById('ent-material').value.toUpperCase(),
-                qtd: document.getElementById('ent-qtd').value,
-                obs: document.getElementById('ent-obs').value
-            };
-
-            try {
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify(payload)
-                });
-                const result = await response.json();
-                if(result.status === "success") {
-                    document.getElementById('form-entrada').reset();
-                    mostrarAviso('Entrada registrada • Protocolo ' + result.protocolo);
+                const r = await fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(payload) });
+                const result = await r.json();
+                if (result.status === 'success') {
+                    document.getElementById(formId).reset();
+                    document.getElementById('ret-saldo').textContent = '';
+                    mostrarAviso(aviso + ' • Protocolo ' + result.protocolo);
                     await carregarDadosEstoque();
                     navegar('estoque');
-                } else {
-                    alert("Erro na planilha: " + result.mensagem);
-                }
-            } catch (erro) {
-                alert("Erro de conexão ao enviar a entrada.");
-            } finally {
-                btn.innerHTML = iconOriginal;
-                btn.disabled = false;
-            }
+                } else { alert('Erro na planilha: ' + result.mensagem); }
+            } catch (e) { alert('Erro de conexão ao enviar. Tente novamente.'); }
+            finally { btn.innerHTML = original; btn.disabled = false; }
         }
 
-        // ===== RELATÓRIOS =====
-        let movimentosCache = null, relatorioAtual = [];
-
-        function fmtData(v) {
-            const d = new Date(v);
-            return isNaN(d) ? String(v || '-') : d.toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' });
+        function enviarRetirada(ev) {
+            ev.preventDefault();
+            const it = acharItem(document.getElementById('ret-material').value);
+            if (!it) { alert('Material não encontrado no estoque. Escolha um item da lista.'); return; }
+            const qtd = Number(document.getElementById('ret-qtd').value), saldo = Number(it.QUANTIDADE_ATUAL) || 0;
+            if (qtd > saldo) { alert('Saldo insuficiente. Disponível: ' + saldo); return; }
+            enviar({
+                acao: 'retirada', data: document.getElementById('ret-data').value,
+                solicitante: document.getElementById('ret-solicitante').value, setor: document.getElementById('ret-setor').value,
+                material: document.getElementById('ret-material').value.toUpperCase(), qtd: qtd, obs: document.getElementById('ret-obs').value
+            }, document.getElementById('btn-retirada'), 'Salvando...', 'form-retirada', 'Retirada registrada');
+        }
+        function enviarEntrada(ev) {
+            ev.preventDefault();
+            enviar({
+                acao: 'entrada', data: document.getElementById('ent-data').value,
+                fornecedor: document.getElementById('ent-fornecedor').value,
+                material: document.getElementById('ent-material').value.toUpperCase(),
+                qtd: document.getElementById('ent-qtd').value, obs: document.getElementById('ent-obs').value
+            }, document.getElementById('btn-entrada'), 'Adicionando...', 'form-entrada', 'Entrada registrada');
         }
 
+        // ===== RELATÓRIO =====
         async function gerarRelatorio() {
-            const btn = document.getElementById('btn-relatorio');
-            const area = document.getElementById('rel-resultado');
+            const btn = document.getElementById('btn-relatorio'), area = document.getElementById('rel-resultado');
             btn.disabled = true;
-            area.innerHTML = '<p class="p-8 text-center text-gray-400">Carregando movimentações...</p>';
+            area.innerHTML = '<div class="card p-8 text-center text-slate-400"><i class="ph ph-spinner animate-spin text-samuazul"></i> Carregando movimentações...</div>';
             try {
-                const r = await fetch(API_URL + '?acao=ler_movimentos');
-                const j = JSON.parse(await r.text());
+                const j = JSON.parse(await (await fetch(API_URL + '?acao=ler_movimentos')).text());
                 if (j.status !== 'success') throw new Error(j.mensagem || 'Erro desconhecido');
                 movimentosCache = [
-                    ...j.retiradas.map(m => ({ id: m.ID_RETIRADA, data: m.DATA, tipo: 'Retirada', pessoa: m.SOLICITANTE, setor: m.SETOR, material: m.MATERIAL, qtd: Number(m.QUANTIDADE) || 0, obs: m.OBSERVACAO })),
-                    ...j.entradas.map(m => ({ id: m.ID_ENTRADA, data: m.DATA, tipo: 'Entrada', pessoa: m.FORNECEDOR, setor: '', material: m.MATERIAL, qtd: Number(m.QUANTIDADE) || 0, obs: m.OBSERVACAO }))
+                    ...j.retiradas.map(m => ({ id: m.ID_RETIRADA, data: m.DATA, tipo: 'Retirada', pessoa: m.SOLICITANTE, setor: m.SETOR, material: titulo(m.MATERIAL), qtd: Number(m.QUANTIDADE) || 0, obs: m.OBSERVACAO })),
+                    ...j.entradas.map(m => ({ id: m.ID_ENTRADA, data: m.DATA, tipo: 'Entrada', pessoa: m.FORNECEDOR, setor: '', material: titulo(m.MATERIAL), qtd: Number(m.QUANTIDADE) || 0, obs: m.OBSERVACAO }))
                 ];
                 renderRelatorio();
             } catch (e) {
-                area.innerHTML = '<p class="p-6 text-center text-red-500 font-medium bg-white rounded-xl border border-red-100">Não foi possível carregar os dados: ' + esc(e.message) + '. Se você atualizou o script, publique uma nova versão da implantação.</p>';
+                area.innerHTML = '<div class="card p-6 text-center text-red-500 font-medium">Não foi possível carregar: ' + esc(e.message) + '. Se você atualizou o script, publique uma nova versão da implantação.</div>';
             } finally { btn.disabled = false; }
         }
 
-        function somarPor(lista, chave) {
-            const m = {};
-            lista.forEach(x => { const k = x[chave] || '-'; m[k] = (m[k] || 0) + x.qtd; });
-            return Object.entries(m).sort((a, b) => b[1] - a[1]);
-        }
-
-        function blocoBarras(titulo, pares, cor) {
-            const top = pares.slice(0, 5), max = top.length ? top[0][1] : 1;
-            const linhas = top.length ? top.map(([nome, v]) =>
-                '<div class="mb-3"><div class="flex justify-between text-sm mb-1"><span class="text-gray-700 truncate pr-2">' + esc(nome) + '</span><span class="font-semibold text-gray-800">' + v + '</span></div>' +
-                '<div class="h-2 bg-gray-100 rounded-full"><div class="h-2 rounded-full ' + cor + '" style="width:' + Math.max(4, v / max * 100) + '%"></div></div></div>').join('')
-                : '<p class="text-sm text-gray-400">Sem retiradas no período.</p>';
-            return '<div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100"><h3 class="font-bold text-gray-800 text-sm mb-4">' + titulo + '</h3>' + linhas + '</div>';
-        }
-
         function renderRelatorio() {
-            if (!movimentosCache) return;
-            const de = document.getElementById('rel-de').value, ate = document.getElementById('rel-ate').value;
-            const tipo = document.getElementById('rel-tipo').value, setor = document.getElementById('rel-setor').value;
-            const busca = document.getElementById('rel-busca').value.trim().toLowerCase();
+            const de = document.getElementById('rel-de').value, ate = document.getElementById('rel-ate').value, tipo = document.getElementById('rel-tipo').value;
             const dDe = de ? new Date(de + 'T00:00:00') : null, dAte = ate ? new Date(ate + 'T23:59:59') : null;
-
             relatorioAtual = movimentosCache.filter(m => {
                 const d = new Date(m.data);
-                if (dDe && !isNaN(d) && d < dDe) return false;
-                if (dAte && !isNaN(d) && d > dAte) return false;
-                if (tipo && m.tipo !== tipo) return false;
-                if (setor && m.setor !== setor) return false;
-                if (busca && !(String(m.material) + ' ' + String(m.pessoa)).toLowerCase().includes(busca)) return false;
-                return true;
+                return !(dDe && d < dDe) && !(dAte && d > dAte) && (!tipo || m.tipo === tipo);
             }).sort((a, b) => new Date(b.data) - new Date(a.data));
 
             const ret = relatorioAtual.filter(m => m.tipo === 'Retirada'), ent = relatorioAtual.filter(m => m.tipo === 'Entrada');
             const soma = l => l.reduce((t, x) => t + x.qtd, 0);
-            const baixos = baseEstoqueCache.filter(i => (Number(i.QUANTIDADE_ATUAL) || 0) <= ((i.ESTOQUE_MINIMO === '' || i.ESTOQUE_MINIMO == null) ? 5 : Number(i.ESTOQUE_MINIMO)));
-
-            const card = (rotulo, valor, cor) => '<div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100"><p class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">' + rotulo + '</p><p class="text-2xl font-bold ' + cor + '">' + valor + '</p></div>';
-            const linhas = relatorioAtual.length ? relatorioAtual.map(m =>
-                '<tr class="border-b border-gray-50 last:border-0"><td class="py-2.5 px-4 text-gray-500 whitespace-nowrap">' + esc(fmtData(m.data)) + '</td>' +
-                '<td class="py-2.5 px-4 font-medium ' + (m.tipo === 'Retirada' ? 'text-red-500' : 'text-green-600') + '">' + m.tipo + '</td>' +
-                '<td class="py-2.5 px-4 text-gray-800">' + esc(m.material) + '</td>' +
-                '<td class="py-2.5 px-4 text-right font-semibold">' + m.qtd + '</td>' +
-                '<td class="py-2.5 px-4 text-gray-600">' + esc(m.pessoa) + (m.setor ? ' <span class="text-gray-400">(' + esc(m.setor) + ')</span>' : '') + '</td>' +
-                '<td class="py-2.5 px-4 text-gray-400">' + esc(m.id) + '</td></tr>').join('')
-                : '<tr><td colspan="6" class="p-8 text-center text-gray-400">Nenhuma movimentação encontrada com esses filtros.</td></tr>';
+            const cartao = (selo, icone, rotulo, valor, sub) =>
+                '<div class="card p-5 flex items-center gap-4"><div class="selo ' + selo + '"><i class="ph ' + icone + '"></i></div><div><p class="lbl" style="margin-bottom:2px">' + rotulo + '</p><p class="text-xl font-bold text-slate-800">' + valor + ' <span class="text-xs font-medium text-slate-400">' + sub + '</span></p></div></div>';
+            const linhas = relatorioAtual.map(m =>
+                '<tr><td class="text-slate-500 whitespace-nowrap">' + fmtData(m.data) + '</td>' +
+                '<td><span class="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full ' + (m.tipo === 'Retirada' ? 'bg-red-50 text-red-600' : 'bg-emerald-50 text-emerald-700') + '">' + m.tipo + '</span></td>' +
+                '<td class="font-medium text-slate-800">' + esc(m.material) + '</td><td class="text-right font-semibold">' + m.qtd + '</td>' +
+                '<td class="text-slate-600">' + esc(m.pessoa) + (m.setor ? ' <span class="text-slate-400">(' + esc(m.setor) + ')</span>' : '') + '</td>' +
+                '<td class="text-slate-400">' + esc(m.id) + '</td></tr>').join('');
 
             document.getElementById('rel-resultado').innerHTML =
-                '<div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">' +
-                card('Movimentações', relatorioAtual.length, 'text-samunavy') + card('Itens retirados', soma(ret), 'text-red-500') +
-                card('Itens recebidos', soma(ent), 'text-green-600') + card('Estoque baixo', baixos.length, 'text-amber-600') + '</div>' +
-                '<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">' + blocoBarras('Materiais mais retirados', somarPor(ret, 'material'), 'bg-red-400') + blocoBarras('Retiradas por setor', somarPor(ret, 'setor'), 'bg-samuazul') + '</div>' +
-                '<div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-x-auto"><table class="w-full text-left text-sm"><thead><tr class="text-xs text-gray-400 uppercase tracking-widest border-b border-gray-100 bg-gray-50/30">' +
-                '<th class="py-3 px-4 font-semibold">Data</th><th class="py-3 px-4 font-semibold">Tipo</th><th class="py-3 px-4 font-semibold">Material</th><th class="py-3 px-4 font-semibold text-right">Qtd</th><th class="py-3 px-4 font-semibold">Solicitante / Origem</th><th class="py-3 px-4 font-semibold">Protocolo</th></tr></thead><tbody>' + linhas + '</tbody></table></div>';
+                '<p class="text-sm text-slate-500 mb-4">Período: <b class="text-slate-700">' + (fmtDia(de) || 'início') + ' a ' + (fmtDia(ate) || 'hoje') + '</b> • Tipo: <b class="text-slate-700">' + (tipo ? tipo + 's' : 'Retiradas e entradas') + '</b></p>' +
+                '<div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">' +
+                cartao('selo-azul', 'ph-swap', 'Movimentações', relatorioAtual.length, 'registros') +
+                cartao('selo-vermelho', 'ph-upload-simple', 'Retirado', soma(ret), 'itens') +
+                cartao('selo-verde', 'ph-download-simple', 'Recebido', soma(ent), 'itens') + '</div>' +
+                '<div class="card overflow-x-auto"><table class="w-full text-left text-sm"><thead><tr><th>Data</th><th>Tipo</th><th>Material</th><th class="text-right">Qtd</th><th>Solicitante / Origem</th><th>Protocolo</th></tr></thead><tbody>' +
+                (linhas || linhaMsg(6, 'Nenhuma movimentação no período selecionado.')) + '</tbody></table></div>';
+            document.getElementById('btn-csv').disabled = document.getElementById('btn-pdf').disabled = !relatorioAtual.length;
         }
 
+        function baixar(blob, nome) {
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob); a.download = nome; a.click(); URL.revokeObjectURL(a.href);
+        }
+        const nomeArquivo = ext => 'relatorio-estoque-' + new Date().toISOString().slice(0, 10) + '.' + ext;
+
         function exportarCSV() {
-            if (!relatorioAtual.length) { mostrarAviso('Gere um relatório com movimentações antes de exportar.'); return; }
             const c = v => '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"';
             const linhas = [['Protocolo', 'Data', 'Tipo', 'Material', 'Quantidade', 'Solicitante/Origem', 'Setor', 'Observação'].map(c).join(';')]
                 .concat(relatorioAtual.map(m => [m.id, fmtData(m.data), m.tipo, m.material, m.qtd, m.pessoa, m.setor, m.obs].map(c).join(';')));
-            const blob = new Blob(['\ufeff' + linhas.join('\r\n')], { type: 'text/csv;charset=utf-8' });
-            const a = document.createElement('a');
-            a.href = URL.createObjectURL(blob);
-            a.download = 'relatorio-estoque-' + new Date().toISOString().slice(0, 10) + '.csv';
-            a.click();
-            URL.revokeObjectURL(a.href);
+            baixar(new Blob(['\ufeff' + linhas.join('\r\n')], { type: 'text/csv;charset=utf-8' }), nomeArquivo('csv'));
         }
 
-        function popularSetoresRelatorio() {
-            const sel = document.getElementById('rel-setor');
-            if (sel.options.length > 1) return;
-            [...document.getElementById('ret-setor').options].filter(o => o.value).forEach(o => sel.add(new Option(o.value, o.value)));
+        function carregarLogo() {
+            return new Promise(res => {
+                const img = new Image();
+                img.onload = () => { try { const c = document.createElement('canvas'); c.width = img.naturalWidth; c.height = img.naturalHeight; c.getContext('2d').drawImage(img, 0, 0); res(c.toDataURL('image/jpeg', 0.9)); } catch (e) { res(null); } };
+                img.onerror = () => res(null);
+                img.src = 'logo-samu.jpg';
+            });
         }
 
+        async function exportarPDF() {
+            if (!window.jspdf || !window.jspdf.jsPDF) { alert('A biblioteca de PDF não carregou. Verifique a internet e recarregue a página.'); return; }
+            const doc = new window.jspdf.jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+            const L = doc.internal.pageSize.getWidth(), A = doc.internal.pageSize.getHeight();
+            const de = document.getElementById('rel-de').value, ate = document.getElementById('rel-ate').value, tipo = document.getElementById('rel-tipo').value;
+            let x = 14;
+            const logo = await carregarLogo();
+            if (logo) { doc.addImage(logo, 'JPEG', 14, 9, 17, 17); x = 35; }
+            doc.setFont('helvetica', 'bold'); doc.setFontSize(16); doc.setTextColor(0, 45, 102);
+            doc.text('SAMU MOGI - Estoque Sala 21', x, 16);
+            doc.setFont('helvetica', 'normal'); doc.setFontSize(10); doc.setTextColor(100);
+            doc.text('Relatório de movimentações', x, 22);
+            doc.text('Gerado em ' + fmtData(new Date()), L - 14, 16, { align: 'right' });
+            doc.setTextColor(40);
+            doc.text('Período: ' + (fmtDia(de) || 'início') + ' a ' + (fmtDia(ate) || 'hoje') + '     Tipo: ' + (tipo ? tipo + 's' : 'Retiradas e entradas'), 14, 34);
+
+            doc.autoTable({
+                startY: 39,
+                head: [['Data', 'Tipo', 'Material', 'Qtd', 'Solicitante / Origem', 'Setor', 'Protocolo']],
+                body: relatorioAtual.map(m => [fmtData(m.data), m.tipo, m.material, m.qtd, m.pessoa || '-', m.setor || '-', m.id]),
+                styles: { fontSize: 9, cellPadding: 2.5, textColor: 40 },
+                headStyles: { fillColor: [0, 45, 102], textColor: 255 },
+                alternateRowStyles: { fillColor: [240, 246, 251] },
+                columnStyles: { 3: { halign: 'right' } },
+                margin: { left: 14, right: 14, bottom: 16 },
+                didParseCell: d => { if (d.section === 'body' && d.column.index === 1) d.cell.styles.textColor = d.cell.raw === 'Retirada' ? [190, 40, 50] : [14, 130, 95]; }
+            });
+
+            const soma = t => relatorioAtual.filter(m => m.tipo === t).reduce((s, m) => s + m.qtd, 0);
+            let y = doc.lastAutoTable.finalY + 8;
+            if (y > A - 20) { doc.addPage(); y = 20; }
+            doc.setFont('helvetica', 'bold'); doc.setFontSize(10); doc.setTextColor(0, 45, 102);
+            doc.text('Total retirado: ' + soma('Retirada') + '     Total recebido: ' + soma('Entrada') + '     Movimentações: ' + relatorioAtual.length, 14, y);
+
+            const n = doc.internal.getNumberOfPages();
+            for (let i = 1; i <= n; i++) {
+                doc.setPage(i); doc.setFont('helvetica', 'normal'); doc.setFontSize(8); doc.setTextColor(140);
+                doc.text('Página ' + i + ' de ' + n, L / 2, A - 8, { align: 'center' });
+            }
+            doc.save(nomeArquivo('pdf'));
+        }
+
+        // ===== NAVEGAÇÃO =====
         function preencherHoraAtual() {
-            const agora = new Date();
-            agora.setMinutes(agora.getMinutes() - agora.getTimezoneOffset());
-            const dataFormatada = agora.toISOString().slice(0, 16);
-            document.getElementById('ret-data').value = dataFormatada;
-            document.getElementById('ent-data').value = dataFormatada;
+            const a = new Date(); a.setMinutes(a.getMinutes() - a.getTimezoneOffset());
+            document.getElementById('ret-data').value = document.getElementById('ent-data').value = a.toISOString().slice(0, 16);
         }
-
+        function preencherPeriodoPadrao() {
+            if (document.getElementById('rel-ate').value) return;
+            const h = new Date();
+            document.getElementById('rel-de').value = h.getFullYear() + '-' + pad(h.getMonth() + 1) + '-01';
+            document.getElementById('rel-ate').value = h.getFullYear() + '-' + pad(h.getMonth() + 1) + '-' + pad(h.getDate());
+        }
         function navegar(alvo) {
             document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
             document.getElementById('view-' + alvo).classList.add('active');
             window.scrollTo(0, 0);
-            if (alvo === 'relatorios') popularSetoresRelatorio();
-            if (alvo === 'retirada' || alvo === 'entrada') {
-                preencherHoraAtual();
-            }
-        }
-
-        function sair() {
-            document.getElementById('app-conteudo').classList.add('hidden');
-            document.getElementById('tela-login').classList.remove('hidden');
-            document.getElementById('tela-login').classList.add('active');
+            if (alvo === 'relatorios') preencherPeriodoPadrao();
+            if (alvo === 'retirada' || alvo === 'entrada') preencherHoraAtual();
         }
     </script>
-    <div id="toast" role="status" class="hidden fixed bottom-6 left-1/2 -translate-x-1/2 bg-samunavy text-white text-sm font-medium px-5 py-3 rounded-lg shadow-lg z-50"></div>
 </body>
 </html>
